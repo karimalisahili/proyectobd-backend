@@ -294,6 +294,7 @@ CREATE TABLE DISTRIBUYEN (
 CREATE TABLE REGISTRAN_FACT_PROD (
     NumFactTienda INT NOT NULL,
     CodProdTienda INT NOT NULL,
+	CantComprada INT NOT NULL,
     PRIMARY KEY (NumFactTienda, CodProdTienda),
     FOREIGN KEY (NumFactTienda) REFERENCES FACTURAS_TIENDAS(CodF) ON UPDATE CASCADE ON DELETE NO ACTION,
     FOREIGN KEY (CodProdTienda) REFERENCES PRODUCTOS_TIENDA(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
@@ -356,7 +357,7 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
 
 
 -- ********************************* TRIGGERS *******************************
-
+/*
 --**** Trigger para validar la inserción en la tabla TELEFONOS_DUENOS ****
 GO
 CREATE TRIGGER trg_MaxDosTelefonos_Ins
@@ -447,3 +448,78 @@ BEGIN
         ROLLBACK TRANSACTION;
     END
 END;
+
+
+-- **** La cantidad teorica disminuye cuando hacemos un consumo/venta ****
+-- Trigger para disminuir la existencia de productos después de insertar en FACTURAS_SERVICIOS
+GO
+CREATE TRIGGER trg_UpdateProductExistence_AfterInsert_FACTURAS_SERVICIOS
+ON FACTURAS_SERVICIOS
+AFTER INSERT
+AS
+BEGIN
+    -- Actualizar la existencia de productos
+    UPDATE p
+    SET p.Existencia = p.Existencia - ca.CantProd
+    FROM PRODUCTOS p
+    JOIN PRODUCTOS_SERVICIOS ps ON p.CodProd = ps.CodProd
+    JOIN CONTRATAN_ACT_ORDENS_PROD_SERV ca ON ps.CodProd = ca.CodProductoServ
+    JOIN ORDENES_SERVICIOS os ON ca.NroOrenServ = os.Nro
+    JOIN inserted i ON os.NumFacturaServ = i.CodF
+    WHERE p.Existencia - ca.CantProd >= 0 -- Asegurarse de que la existencia no sea negativa
+END;
+
+
+
+
+-- Trigger para disminuir la existencia de productos después de insertar en FACTURAS_TIENDAS
+GO
+CREATE TRIGGER trg_UpdateProductExistence_AfterInsert_FACTURAS_TIENDAS
+ON FACTURAS_TIENDAS
+AFTER INSERT
+AS
+BEGIN
+    -- Actualizar la existencia de productos
+    UPDATE p
+    SET p.Existencia = p.Existencia - rf.CantComprada
+    FROM PRODUCTOS p
+    JOIN PRODUCTOS_TIENDA pt ON p.CodProd = pt.CodProd
+    JOIN REGISTRAN_FACT_PROD rf ON pt.CodProd = rf.CodProdTienda
+    JOIN inserted i ON rf.NumFactTienda = i.CodF
+    WHERE p.Existencia - rf.CantComprada >= 0 -- Asegurarse de que la existencia no sea negativa
+END;
+GO
+
+
+-- **** Jerarquia exclusiva de las tablas Productos ****
+-- Trigger para asegurar la jerarquía exclusiva en PRODUCTOS_SERVICIOS
+GO
+CREATE TRIGGER trg_VerifyExclusiveHierarchy_AfterInsert_PRODUCTOS_SERVICIOS
+ON PRODUCTOS_SERVICIOS
+AFTER INSERT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM PRODUCTOS_TIENDA WHERE CodProd IN (SELECT CodProd FROM inserted))
+    BEGIN
+        RAISERROR ('El producto ya existe en PRODUCTOS_TIENDA. La jerarquía exclusiva no se cumple.', 16, 1)
+        ROLLBACK TRANSACTION
+    END
+END;
+GO
+
+-- Trigger para asegurar la jerarquía exclusiva en PRODUCTOS_TIENDA
+GO
+CREATE TRIGGER trg_VerifyExclusiveHierarchy_AfterInsert_PRODUCTOS_TIENDA
+ON PRODUCTOS_TIENDA
+AFTER INSERT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM PRODUCTOS_SERVICIOS WHERE CodProd IN (SELECT CodProd FROM inserted))
+    BEGIN
+        RAISERROR ('El producto ya existe en PRODUCTOS_SERVICIOS. La jerarquía exclusiva no se cumple.', 16, 1)
+        ROLLBACK TRANSACTION
+    END
+END;
+GO
+
+*/

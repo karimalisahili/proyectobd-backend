@@ -6,7 +6,7 @@ CREATE TABLE SUCURSALES (
     RIFSuc VARCHAR(12) NOT NULL PRIMARY KEY,
     NombreSuc VARCHAR(50) NOT NULL,
     Ciudad VARCHAR(70) NOT NULL,
-    Encargado VARCHAR(8) NOT NULL,
+    Encargado VARCHAR(8),
     FechaInEnc DATE
 );
 

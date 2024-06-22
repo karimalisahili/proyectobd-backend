@@ -1,6 +1,8 @@
-CREATE DATABASE tallerdb;
+--CREATE DATABASE tallerdb;
+
 
 USE tallerdb;
+/*
 -- Crear la tabla SUCURSALES sin la restricci�n de clave for�nea
 CREATE TABLE SUCURSALES (
     RIFSuc VARCHAR(12) NOT NULL PRIMARY KEY,
@@ -350,3 +352,98 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
     FOREIGN KEY (CodProductoServ) REFERENCES PRODUCTOS_SERVICIOS(CodProd) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+*/
+
+
+-- ********************************* TRIGGERS *******************************
+
+--**** Trigger para validar la inserción en la tabla TELEFONOS_DUENOS ****
+GO
+CREATE TRIGGER trg_MaxDosTelefonos_Ins
+ON TELEFONOS_DUENOS
+AFTER INSERT
+AS
+BEGIN
+    -- Contar la cantidad de teléfonos existentes para cada vehículo afectado por la inserción
+    IF EXISTS (
+        SELECT CodVehiculo
+        FROM TELEFONOS_DUENOS
+        WHERE CodVehiculo IN (SELECT CodVehiculo FROM inserted)
+        GROUP BY CodVehiculo
+        HAVING COUNT(NroTelefono) > 2
+    )
+    BEGIN
+        -- Si ya hay 2 teléfonos, no permitir la inserción
+        RAISERROR ('No se puede insertar más de dos teléfonos para un vehículo.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
+
+--**** Trigger para validar la actualización en la tabla TELEFONOS_DUENOS ****
+GO
+CREATE TRIGGER trg_MaxDosTelefonos_Upd
+ON TELEFONOS_DUENOS
+AFTER UPDATE
+AS
+BEGIN
+    -- Contar la cantidad de teléfonos existentes para cada vehículo afectado por la actualización
+    IF EXISTS (
+        SELECT CodVehiculo
+        FROM TELEFONOS_DUENOS
+        WHERE CodVehiculo IN (SELECT CodVehiculo FROM inserted)
+        GROUP BY CodVehiculo
+        HAVING COUNT(NroTelefono) > 2
+    )
+    BEGIN
+        -- Si ya hay 2 teléfonos, no permitir la actualización
+        RAISERROR ('No se puede actualizar a más de dos teléfonos para un vehículo.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
+
+
+
+--**** Trigger para validar el cumplimiento de la jerarquia exclusiva en la tabla PAGOS al insertar ****
+GO
+CREATE TRIGGER trg_JerarquiaExclusiva_Ins
+ON PAGOS
+AFTER INSERT
+AS
+BEGIN
+    -- Validar según TipoPago
+    IF EXISTS (
+        SELECT 1
+        FROM inserted
+        WHERE (TipoPago = 'E' AND (TipoEfectivo IS NULL OR Referencia IS NOT NULL OR NroTelf IS NOT NULL OR TipoTarjeta IS NOT NULL OR Banco IS NOT NULL OR NumTarjeta IS NOT NULL))
+        OR (TipoPago = 'P' AND (Referencia IS NULL OR NroTelf IS NULL))
+        OR (TipoPago = 'T' AND (TipoTarjeta IS NULL OR Banco IS NULL OR NumTarjeta IS NULL))
+    )
+    BEGIN
+        RAISERROR ('Validación fallida para la tabla PAGOS.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+
+
+--**** Trigger para validar el cumplimiento de la jerarquia exclusiva en la tabla PAGOS al actualizar ****
+GO
+CREATE TRIGGER trg_JerarquiaExclusiva_Upd
+ON PAGOS
+AFTER UPDATE
+AS
+BEGIN
+    -- Validar según TipoPago
+    IF EXISTS (
+        SELECT 1
+        FROM inserted
+        WHERE (TipoPago = 'E' AND (TipoEfectivo IS NULL OR Referencia IS NOT NULL OR NroTelf IS NOT NULL OR TipoTarjeta IS NOT NULL OR Banco IS NOT NULL OR NumTarjeta IS NOT NULL))
+        OR (TipoPago = 'P' AND (Referencia IS NULL OR NroTelf IS NULL))
+        OR (TipoPago = 'T' AND (TipoTarjeta IS NULL OR Banco IS NULL OR NumTarjeta IS NULL))
+    )
+    BEGIN
+        RAISERROR ('Validación fallida para la tabla PAGOS.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;

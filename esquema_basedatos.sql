@@ -9,7 +9,8 @@ CREATE TABLE SUCURSALES (
     NombreSuc VARCHAR(50) NOT NULL,
     Ciudad VARCHAR(70) NOT NULL,
     Encargado VARCHAR(8),
-    FechaInEnc DATE
+	codigo varchar(20) not null,
+    FechaInEnc DATE,
 );
 
 -- Crear la tabla TRABAJADORES con la restricci�n de clave for�nea

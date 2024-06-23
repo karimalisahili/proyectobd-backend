@@ -29,11 +29,26 @@ exports.createSucursal = (req, res) => {
 // DELETE operation
 exports.deleteSucursal = (req, res) => {
   // Aquí estamos asumiendo que el ID de la sucursal viene en el parámetro de la URL
-  console.log(req.params.id);
-  res.status(200).send();
+  const  { RIFSuc } = req.body;
+  
+  // Preparar la sentencia SQL para eliminar la sucursal
+  const sqlDelete = 'DELETE FROM SUCURSALES WHERE RIFSuc = ?';
+
+  // Ejecutar la sentencia SQL
+  sql.query(connectionString, sqlDelete, [RIFSuc], (err, result) => {
+    if (err) {
+      console.error('Error al eliminar la sucursal', err);
+      res.status(500).send('Error al eliminar la sucursal');
+      return;
+    }
+    console.log('Sucursal eliminada con éxito', result);
+    res.status(200).send('Sucursal eliminada con éxito');
+  });
+  
 };
 
 // PUT operation
 exports.updateSucursal = (req, res) => {
-  // Aquí iría tu código para actualizar una sucursal
+
+
 };

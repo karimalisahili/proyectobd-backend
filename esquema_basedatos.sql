@@ -30,14 +30,11 @@ ALTER TABLE SUCURSALES
 ADD FOREIGN KEY (Encargado) REFERENCES TRABAJADORES(Cedula) ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 
-
 -- Tabla RESPONSABLES
 CREATE TABLE RESPONSABLES (
     CIResponsable VARCHAR(8) NOT NULL PRIMARY KEY,
     NombreResponsable VARCHAR(30) NOT NULL
 );
-
-
 
 -- Tabla FACTURAS_PROVEEDORES
 CREATE TABLE FACTURAS_PROVEEDORES (
@@ -45,6 +42,7 @@ CREATE TABLE FACTURAS_PROVEEDORES (
     Monto DECIMAL(10, 2) NOT NULL CHECK (Monto > 0),
     Fecha DATE NOT NULL
 );
+
 -- Tabla MARCAS_VEHICULOS
 CREATE TABLE MARCAS_VEHICULOS (
     CodMarcaVeh INT NOT NULL PRIMARY KEY,
@@ -361,7 +359,6 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
 
 
 -- ********************************* TRIGGERS *******************************
-
 
 --***************************Karim *********************************
 --**** Trigger para validar la inserción en la tabla TELEFONOS_DUENOS ****

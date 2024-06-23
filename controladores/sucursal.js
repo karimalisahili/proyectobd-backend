@@ -2,8 +2,19 @@ const {sql, connectionString} = require('../config'); // Asegúrate de que la ru
 
 // GET operation
 exports.getSucursal = (req, res) => {
-  // Aquí simplemente estamos enviando un objeto JSON de ejemplo
-  res.json({ id: 1, nombre: 'Sucursal 1', ubicacion: 'Ubicación 1' });
+  // Preparar la sentencia SQL para obtener todas las sucursales
+  const sqlSelect = 'SELECT * FROM SUCURSALES';
+
+  // Ejecutar la sentencia SQL
+  sql.query(connectionString, sqlSelect, (err, result) => {
+    if (err) {
+      console.error('Error al obtener las sucursales', err);
+      res.status(500).send('Error al obtener las sucursales');
+      return;
+    }
+    console.log('Sucursales obtenidas con éxito', result);
+    res.status(200).json(result);
+  });
 };
 
 
@@ -49,6 +60,20 @@ exports.deleteSucursal = (req, res) => {
 
 // PUT operation
 exports.updateSucursal = (req, res) => {
+  // Assuming the request body contains the necessary fields to update in the SUCURSALES table
+  const { RIFSuc, NombreSuc, Ciudad, codigo, Encargado, FechaInEnc } = req.body;
 
+  // Prepare the SQL statement to update data
+  const sqlUpdate = 'UPDATE SUCURSALES SET NombreSuc = ?, Ciudad = ?, codigo = ?, Encargado = ?, FechaInEnc = ? WHERE RIFSuc = ?';
 
+  // Execute the SQL statement
+  sql.query(connectionString, sqlUpdate, [NombreSuc, Ciudad, codigo, Encargado, FechaInEnc, RIFSuc], (err, result) => {
+    if (err) {
+      console.error('Error updating the branch', err);
+      res.status(500).send('Error updating the branch');
+      return;
+    }
+    console.log('Branch updated successfully', result);
+    res.status(200).send('Branch updated successfully');
+  });
 };

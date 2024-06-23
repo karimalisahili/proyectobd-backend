@@ -277,8 +277,11 @@ CREATE TABLE ACTIVIDADES (
     Descripcion VARCHAR(50) NOT NULL,
     Monto DECIMAL(10, 2) NOT NULL,
     AntelacionReserva INT NOT NULL,
+	rifSucursal VARCHAR(12),
+    capacidad INT,
     PRIMARY KEY (CodServicio, NroActividad),
-    FOREIGN KEY (CodServicio) REFERENCES SERVICIOS(CodigoServ) ON UPDATE CASCADE ON DELETE NO ACTION
+    FOREIGN KEY (CodServicio) REFERENCES SERVICIOS(CodigoServ) ON UPDATE CASCADE ON DELETE NO ACTION,
+	FOREIGN KEY (rifSucursal) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- Tabla DISTRIBUYEN
@@ -522,4 +525,180 @@ BEGIN
 END;
 GO
 
+--Trigger para validar que la cantidad del producto en la orden de compra sea mayor al 25% del mínimo
+GO
+CREATE TRIGGER ajustar_cantidad_orden
+ON ORDENES_COMPRAS
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @nueva_cantidad INT;
+    DECLARE @cantidad_necesaria INT;
+    DECLARE @cantidad_actual INT;
+    DECLARE @nivel_minimo INT;
+    DECLARE @nivel_maximo INT;
+
+    -- Obtener la cantidad actual, nivel mínimo y nivel máximo del producto
+    SELECT @cantidad_actual = Existencia, @nivel_minimo = Minimo, @nivel_maximo = Maximo
+    FROM PRODUCTOS
+    INNER JOIN inserted ON PRODUCTOS.CodProd = inserted.CodProd;
+
+    -- Calcular la cantidad necesaria para alcanzar el nivel deseado (25% por encima del mínimo)
+    SET @cantidad_necesaria = @nivel_minimo * 1.25;
+
+    -- Calcular la nueva cantidad para la orden
+    SET @nueva_cantidad = @cantidad_necesaria - @cantidad_actual;
+
+    -- Si la nueva cantidad es mayor a 0, actualizar la orden con la nueva cantidad
+    IF @nueva_cantidad > 0
+        UPDATE ORDENES_COMPRAS
+        SET CantidadProd = @nueva_cantidad
+        WHERE CodProd IN (SELECT CodProd FROM inserted);
+
+
+--Trigger para generar una requisicion de compra al final del dia 
+CREATE TRIGGER generar_requisicion_compra
+ON PRODUCTOS
+AFTER UPDATE
+AS
+BEGIN
+    DECLARE @currentDate DATE = CONVERT(DATE, GETDATE());
+    DECLARE @CodProd INT;
+    DECLARE @Existencia INT;
+    DECLARE @Minimo INT;
+    DECLARE @CantProd INT;
+
+    -- Cursor para recorrer los productos actualizados
+    DECLARE product_cursor CURSOR FOR
+    SELECT CodProd, Existencia, Minimo
+    FROM INSERTED
+    WHERE Existencia <= Minimo;
+
+    OPEN product_cursor;
+
+    FETCH NEXT FROM product_cursor INTO @CodProd, @Existencia, @Minimo;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Calcular la cantidad necesaria para alcanzar el nivel deseado (25% por encima del mínimo)
+        SET @CantProd = CEILING((@Minimo * 1.25) - @Existencia);
+
+        -- Insertar una nueva requisición de compra
+        IF @CantProd > 0
+        BEGIN
+            INSERT INTO REQUISICIONES_COMPRA (Fecha, CantProd, CodProd)
+            VALUES (@currentDate, @CantProd, @CodProd);
+        END
+
+        FETCH NEXT FROM product_cursor INTO @CodProd, @Existencia, @Minimo;
+    END;
+
+    CLOSE product_cursor;
+    DEALLOCATE product_cursor;
+END;
+
+--Trigger para verificar la disponibilidad y calcular el abono de una reserva
+GO
+CREATE TRIGGER trg_VerificarDisponibilidadYCalcularAbono
+ON RESERVAS
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @NroR INT;
+    DECLARE @CodVehiculo INT;
+    DECLARE @Abono DECIMAL(10, 2);
+    DECLARE @CodServicio INT;
+    DECLARE @NroActividad INT;
+    DECLARE @Monto DECIMAL(10, 2);
+    DECLARE @AntelacionReserva INT;
+
+    -- Obtener la información de la reserva recién insertada
+    SELECT @NroR = INSERTED.NroR, @CodVehiculo = INSERTED.CodVehiculo, @Abono = INSERTED.Abono
+    FROM INSERTED;
+
+    -- Comprobar la disponibilidad del servicio
+    SELECT TOP 1 @CodServicio = CodServicio, @NroActividad = NroActividad, @Monto = Monto, @AntelacionReserva = AntelacionReserva
+    FROM ACTIVIDADES
+    WHERE CodServicio = @CodVehiculo;
+
+    -- Verificar si la reserva cumple con la antelación mínima requerida
+    IF DATEDIFF(DAY, GETDATE(), @AntelacionReserva) >= @AntelacionReserva
+    BEGIN
+        -- Calcular el abono mínimo y máximo permitido
+        DECLARE @AbonoMinimo DECIMAL(10, 2);
+        DECLARE @AbonoMaximo DECIMAL(10, 2);
+
+        SET @AbonoMinimo = @Monto * 0.20;
+        SET @AbonoMaximo = @Monto * 0.50;
+
+        -- Verificar si el abono está dentro del rango permitido
+        IF @Abono < @AbonoMinimo OR @Abono > @AbonoMaximo
+        BEGIN
+            RAISERROR('El abono debe estar entre el 20%% y el 50%% del monto del servicio.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Insertar la relación entre la reserva y la actividad
+        INSERT INTO APARTAN_RES_ACT (NroReserva, CodServicio, NroActividad, FechaEjecucion)
+        VALUES (@NroR, @CodServicio, @NroActividad, DATEADD(DAY, @AntelacionReserva, GETDATE()));
+    END
+    ELSE
+    BEGIN
+        RAISERROR('No hay disponibilidad para la reserva con la antelación requerida.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+END;
+
+--Trigger para aumerntar la existencia de un producto en la tabla PRODUCTOS
+GO
+CREATE TRIGGER trg_AumentarExistencia
+ON ORDENES_COMPRAS
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @CodProd INT;
+    DECLARE @CantidadProd INT;
+
+    -- Obtener la información de la orden de compra recién insertada
+    SELECT @CodProd = CodRequiCom, @CantidadProd = CantidadProd
+    FROM INSERTED;
+
+    -- Actualizar la existencia del producto en la tabla PRODUCTOS
+    UPDATE PRODUCTOS
+    SET Existencia = Existencia + @CantidadProd
+    WHERE CodProd = @CodProd;
+END;
+
+-- Trigger para verificar la anticipación de una reserva
+GO
+CREATE TRIGGER trg_VerificarAnticipacionReserva
+ON RESERVAS
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @NroR INT;
+    DECLARE @FechaR DATE;
+    DECLARE @CodVehiculo INT;
+    DECLARE @AntelacionReserva INT;
+    DECLARE @CodServicio INT;
+
+    -- Obtener la información de la reserva recién insertada
+    SELECT @NroR = INSERTED.NroR, @FechaR = INSERTED.FechaR, @CodVehiculo = INSERTED.CodVehiculo
+    FROM INSERTED;
+
+    -- Obtener la información del servicio que requiere reserva
+    SELECT @CodServicio = CodServicio, @AntelacionReserva = AntelacionReserva
+    FROM ACTIVIDADES
+    WHERE CodServicio = @CodVehiculo; -- Supongamos que CodVehiculo se refiere a un servicio en ACTIVIDADES
+
+    -- Verificar la anticipación mínima requerida
+    IF DATEDIFF(DAY, GETDATE(), @FechaR) < @AntelacionReserva
+    BEGIN
+        RAISERROR('La reserva debe realizarse con una anticipación mínima de %d días para garantizar el cupo.', 16, 1, @AntelacionReserva);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+END;
 */

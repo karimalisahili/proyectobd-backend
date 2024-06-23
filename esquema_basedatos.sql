@@ -2,7 +2,8 @@
 
 
 USE tallerdb;
-/*
+
+
 -- Crear la tabla SUCURSALES sin la restricci�n de clave for�nea
 CREATE TABLE SUCURSALES (
     RIFSuc VARCHAR(12) NOT NULL PRIMARY KEY,
@@ -357,11 +358,12 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
     FOREIGN KEY (CodProductoServ) REFERENCES PRODUCTOS_SERVICIOS(CodProd) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-*/
 
 
 -- ********************************* TRIGGERS *******************************
-/*
+
+
+--***************************Karim *********************************
 --**** Trigger para validar la inserción en la tabla TELEFONOS_DUENOS ****
 GO
 CREATE TRIGGER trg_MaxDosTelefonos_Ins
@@ -430,7 +432,7 @@ BEGIN
         ROLLBACK TRANSACTION;
     END
 END;
-
+GO
 
 --**** Trigger para validar el cumplimiento de la jerarquia exclusiva en la tabla PAGOS al actualizar ****
 GO
@@ -452,7 +454,7 @@ BEGIN
         ROLLBACK TRANSACTION;
     END
 END;
-
+GO
 
 -- **** La cantidad teorica disminuye cuando hacemos un consumo/venta ****
 -- Trigger para disminuir la existencia de productos después de insertar en FACTURAS_SERVICIOS
@@ -472,7 +474,7 @@ BEGIN
     JOIN inserted i ON os.NumFacturaServ = i.CodF
     WHERE p.Existencia - ca.CantProd >= 0 -- Asegurarse de que la existencia no sea negativa
 END;
-
+GO
 
 
 
@@ -526,38 +528,10 @@ BEGIN
 END;
 GO
 
---Trigger para validar que la cantidad del producto en la orden de compra sea mayor al 25% del mínimo
-GO
-CREATE TRIGGER ajustar_cantidad_orden
-ON ORDENES_COMPRAS
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @nueva_cantidad INT;
-    DECLARE @cantidad_necesaria INT;
-    DECLARE @cantidad_actual INT;
-    DECLARE @nivel_minimo INT;
-    DECLARE @nivel_maximo INT;
 
-    -- Obtener la cantidad actual, nivel mínimo y nivel máximo del producto
-    SELECT @cantidad_actual = Existencia, @nivel_minimo = Minimo, @nivel_maximo = Maximo
-    FROM PRODUCTOS
-    INNER JOIN inserted ON PRODUCTOS.CodProd = inserted.CodProd;
-
-    -- Calcular la cantidad necesaria para alcanzar el nivel deseado (25% por encima del mínimo)
-    SET @cantidad_necesaria = @nivel_minimo * 1.25;
-
-    -- Calcular la nueva cantidad para la orden
-    SET @nueva_cantidad = @cantidad_necesaria - @cantidad_actual;
-
-    -- Si la nueva cantidad es mayor a 0, actualizar la orden con la nueva cantidad
-    IF @nueva_cantidad > 0
-        UPDATE ORDENES_COMPRAS
-        SET CantidadProd = @nueva_cantidad
-        WHERE CodProd IN (SELECT CodProd FROM inserted);
-
-
+--***************************SEBASTIAN *********************************
 --Trigger para generar una requisicion de compra al final del dia 
+GO
 CREATE TRIGGER generar_requisicion_compra
 ON PRODUCTOS
 AFTER UPDATE
@@ -597,7 +571,7 @@ BEGIN
     CLOSE product_cursor;
     DEALLOCATE product_cursor;
 END;
-
+GO
 --Trigger para verificar la disponibilidad y calcular el abono de una reserva
 GO
 CREATE TRIGGER trg_VerificarDisponibilidadYCalcularAbono
@@ -651,7 +625,7 @@ BEGIN
         RETURN;
     END
 END;
-
+GO
 --Trigger para aumerntar la existencia de un producto en la tabla PRODUCTOS
 GO
 CREATE TRIGGER trg_AumentarExistencia
@@ -702,4 +676,41 @@ BEGIN
         RETURN;
     END
 END;
-*/
+GO
+
+
+GO
+CREATE TRIGGER trg_AjustarCantidadOrden
+ON ORDENES_COMPRAS
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @CodProd INT;
+    DECLARE @CantidadProd INT;
+    DECLARE @Minimo INT;
+    DECLARE @Existencia INT;
+    DECLARE @CantidadNecesaria INT;
+
+    -- Obtener la información de la orden de compra recién insertada
+    SELECT @CodProd = CodRequiCom, @CantidadProd = CantidadProd
+    FROM INSERTED;
+
+    -- Obtener la información del producto
+    SELECT @Minimo = Minimo, @Existencia = Existencia
+    FROM PRODUCTOS
+    WHERE CodProd = @CodProd;
+
+    -- Calcular la cantidad necesaria para que el inventario quede un 25% por encima del nivel mínimo
+    SET @CantidadNecesaria = (@Minimo * 1.25) - @Existencia;
+
+    -- Verificar si la cantidad actual es suficiente
+    IF @CantidadProd < @CantidadNecesaria
+    BEGIN
+        -- Actualizar la cantidad pedida en la orden de compra
+        UPDATE ORDENES_COMPRAS
+        SET CantidadProd = @CantidadNecesaria
+        WHERE CodOrden = (SELECT CodOrden FROM INSERTED);
+    END
+END;
+GO
+-- **************** EDILIANNY ****************************

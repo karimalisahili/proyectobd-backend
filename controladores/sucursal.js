@@ -20,13 +20,13 @@ exports.getSucursal = (req, res) => {
 
 exports.createSucursal = (req, res) => {
   // Asumiendo que el cuerpo de la solicitud contiene los campos necesarios para insertar en la tabla SUCURSALES
-  const { RIFSuc, NombreSuc, Ciudad, codigo } = req.body;
+  const { RIFSuc, NombreSuc, Ciudad} = req.body;
 
   // Preparar la sentencia SQL para insertar datos
-  const sqlInsert = 'INSERT INTO SUCURSALES (RIFSuc, NombreSuc, Ciudad, codigo) VALUES (?, ?, ?, ?)';
+  const sqlInsert = 'INSERT INTO SUCURSALES (RIFSuc, NombreSuc, Ciudad) VALUES (?, ?, ?)';
 
   // Ejecutar la sentencia SQL
-  sql.query(connectionString, sqlInsert, [RIFSuc, NombreSuc, Ciudad, codigo], (err, result) => {
+  sql.query(connectionString, sqlInsert, [RIFSuc, NombreSuc, Ciudad], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
       res.status(500).send('Error al insertar en la base de datos');
@@ -61,13 +61,13 @@ exports.deleteSucursal = (req, res) => {
 // PUT operation
 exports.updateSucursal = (req, res) => {
   // Assuming the request body contains the necessary fields to update in the SUCURSALES table
-  const { RIFSuc, NombreSuc, Ciudad, codigo, Encargado, FechaInEnc } = req.body;
+  const { RIFSuc, NombreSuc, Ciudad, Encargado, FechaInEnc } = req.body;
 
   // Prepare the SQL statement to update data
-  const sqlUpdate = 'UPDATE SUCURSALES SET NombreSuc = ?, Ciudad = ?, codigo = ?, Encargado = ?, FechaInEnc = ? WHERE RIFSuc = ?';
+  const sqlUpdate = 'UPDATE SUCURSALES SET NombreSuc = ?, Ciudad = ?, Encargado = ?, FechaInEnc = ? WHERE RIFSuc = ?';
 
   // Execute the SQL statement
-  sql.query(connectionString, sqlUpdate, [NombreSuc, Ciudad, codigo, Encargado, FechaInEnc, RIFSuc], (err, result) => {
+  sql.query(connectionString, sqlUpdate, [NombreSuc, Ciudad, Encargado, FechaInEnc, RIFSuc], (err, result) => {
     if (err) {
       console.error('Error updating the branch', err);
       res.status(500).send('Error updating the branch');

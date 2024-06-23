@@ -1,15 +1,23 @@
 const express = require('express');
-const controller = require('../controladores/sucursal');
-
 const router = express.Router();
 
+// Importar controladores
+const sucursal = require('../controladores/sucursal');
+const trabajadores = require('../controladores/trabajadores');
+
+
+
 //*********************SURCURSAL************************
-router.get('/sucursal', controller.getSucursal);
-router.post('/sucursal', controller.createSucursal);
-router.delete('/sucursal', controller.deleteSucursal);
-router.put('/sucursal', controller.updateSucursal);
+router.get('/sucursal', sucursal.getSucursal);
+router.post('/sucursal', sucursal.createSucursal);
+router.delete('/sucursal', sucursal.deleteSucursal);
+router.put('/sucursal', sucursal.updateSucursal);
 
 //*********************TRABAJADORES************************
+router.get('/trabajadores', trabajadores.getTrabajadores);
+router.post('/trabajadores', trabajadores.createTrabajadores);
+router.delete('/trabajadores', trabajadores.deleteTrabajadores);
+router.put('/trabajadores', trabajadores.updateTrabajadores);
 
 //*********************RESPONSABLES************************
 
@@ -70,7 +78,6 @@ router.put('/sucursal', controller.updateSucursal);
 //*********************MANTENIMIENTO_VEHICULO**************************
 
 //*********************CONTRATAN_ACT_ORDENS_PROD_SERV**************************
-
 
 
 

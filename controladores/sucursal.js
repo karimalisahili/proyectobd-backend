@@ -1,14 +1,29 @@
+const {sql, connectionString} = require('../config'); // Asegúrate de que la ruta sea correcta
+
 // GET operation
 exports.getSucursal = (req, res) => {
   // Aquí simplemente estamos enviando un objeto JSON de ejemplo
   res.json({ id: 1, nombre: 'Sucursal 1', ubicacion: 'Ubicación 1' });
 };
 
-// POST operation
+
 exports.createSucursal = (req, res) => {
-  // Aquí estamos asumiendo que el cuerpo de la solicitud es un objeto JSON
-  console.log(req.body);
-  res.status(201).send();
+  // Asumiendo que el cuerpo de la solicitud contiene los campos necesarios para insertar en la tabla SUCURSALES
+  const { RIFSuc, NombreSuc, Ciudad, codigo } = req.body;
+
+  // Preparar la sentencia SQL para insertar datos
+  const sqlInsert = 'INSERT INTO SUCURSALES (RIFSuc, NombreSuc, Ciudad, codigo) VALUES (?, ?, ?, ?)';
+
+  // Ejecutar la sentencia SQL
+  sql.query(connectionString, sqlInsert, [RIFSuc, NombreSuc, Ciudad, codigo], (err, result) => {
+    if (err) {
+      console.error('Error al insertar en la base de datos', err);
+      res.status(500).send('Error al insertar en la base de datos');
+      return;
+    }
+    console.log('Sucursal creada con éxito', result);
+    res.status(201).send('Sucursal creada con éxito');
+  });
 };
 
 // DELETE operation

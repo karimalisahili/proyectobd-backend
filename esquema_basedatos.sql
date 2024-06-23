@@ -3,7 +3,7 @@
 
 USE tallerdb;
 
-
+/*
 -- Crear la tabla SUCURSALES sin la restricci�n de clave for�nea
 CREATE TABLE SUCURSALES (
     RIFSuc VARCHAR(12) NOT NULL PRIMARY KEY,
@@ -714,3 +714,5 @@ BEGIN
 END;
 GO
 -- **************** EDILIANNY ****************************
+*/
+

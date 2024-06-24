@@ -6,6 +6,7 @@ const sucursal = require('../controladores/sucursal');
 const trabajadores = require('../controladores/trabajadores');
 const responsables = require('../controladores/responsables');
 const marcas_vehiculos = require('../controladores/marcas_vehiculos');
+const tipos_vehiculos = require('../controladores/tipos_vehiculos');
 
 
 

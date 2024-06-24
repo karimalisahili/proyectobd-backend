@@ -7,7 +7,7 @@ const trabajadores = require('../controladores/trabajadores');
 
 
 
-//*********************SURCURSAL************************
+//*********************SURCURSALES************************
 router.get('/sucursal', sucursal.getSucursal);
 router.post('/sucursal', sucursal.createSucursal);
 router.delete('/sucursal', sucursal.deleteSucursal);
@@ -19,29 +19,29 @@ router.post('/trabajadores', trabajadores.createTrabajadores);
 router.delete('/trabajadores', trabajadores.deleteTrabajadores);
 router.put('/trabajadores', trabajadores.updateTrabajadores);
 
-//*********************RESPONSABLES******************************
+//*********************RESPONSABLES****************************** K
 
-//*********************FACTURAS_PROVEEDORES CRD****************
+//*********************FACTURAS_PROVEEDORES CRD**************** E
 
-//*********************MARCAS_VEHICULOS*******************
+//*********************MARCAS_VEHICULOS*******************S
 
-//*********************TIPOS_VEHICULOS******************
+//*********************TIPOS_VEHICULOS******************K
 
-//*********************LINEAS***************************
+//*********************LINEAS***************************E
 
-//*********************PROVEEDORES************************
+//*********************PROVEEDORES************************S
 
-//*********************MODELOS_VEHICULOS************************
+//*********************MODELOS_VEHICULOS************************K
 
-//*********************VEHICULOS************************
+//*********************VEHICULOS************************E
 
-//*********************FACTURAS_SERVICIOS CRD************************
+//*********************FACTURAS_SERVICIOS CRD************************S
 
-//*********************AUTORIZADOS************************
+//*********************AUTORIZADOS************************K
 
-//*********************ORDENES_SERVICIOS************************
+//*********************ORDENES_SERVICIOS************************E
 
-//*********************SERVICIOS************************
+//*********************SERVICIOS************************S
 
 //*********************PRODUCTOS************************
 

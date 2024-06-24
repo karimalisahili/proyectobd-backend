@@ -7,7 +7,8 @@ const trabajadores = require('../controladores/trabajadores');
 const responsables = require('../controladores/responsables');
 const marcas_vehiculos = require('../controladores/marcas_vehiculos');
 const tipos_vehiculos = require('../controladores/tipos_vehiculos');
-const facturas_proveedores= require('../controladores/facturas_proveedores')
+const facturas_proveedores= require('../controladores/facturas_proveedores');
+const vehiculos = require('../controladores/vehiculos');
 const lineas = require('../controladores/lineas');
 const proveedores = require('../controladores/proveedores');
 
@@ -50,6 +51,7 @@ router.delete('/tiposvehiculos', tipos_vehiculos.deleteTiposVehiculos);
 router.put('/tiposvehiculos', tipos_vehiculos.updateTiposVehiculos);
 
 //*********************LINEAS***************************
+
 router.get('/lineas', lineas.getLineas);
 router.post('/lineas', lineas.createLineas);
 router.delete('/lineas', lineas.deleteLineas);
@@ -67,6 +69,11 @@ router.post('/modelosvehiculos',modelos_vehiculos.createModeloVehiculo);
 router.delete('/modelosvehiculos',modelos_vehiculos.deleteModeloVehiculo);
 router.put('/modelosvehiculos',modelos_vehiculos.updateModeloVehiculo);
 //*********************VEHICULOS************************
+
+router.get('/vehiculos', vehiculos.getVehiculos);
+router.post('/vehiculos', vehiculos.createVehiculos);
+router.delete('/vehiculos', vehiculos.deleteVehiculos);
+router.put('/vehiculos', vehiculos.updateVehiculos);
 
 //*********************FACTURAS_SERVICIOS CRD************************
 

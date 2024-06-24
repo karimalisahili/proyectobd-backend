@@ -5,6 +5,7 @@ const router = express.Router();
 const sucursal = require('../controladores/sucursal');
 const trabajadores = require('../controladores/trabajadores');
 const responsables = require('../controladores/responsables');
+const tipos_vehiculos = require('../controladores/tipos_vehiculos');
 
 
 
@@ -33,6 +34,10 @@ router.put('/responsables', responsables.updateResponsables);
 //*********************MARCAS_VEHICULOS*******************S
 
 //*********************TIPOS_VEHICULOS******************K
+router.get('/tiposvehiculos', tipos_vehiculos.getTiposVehiculos);
+router.post('/tiposvehiculos', tipos_vehiculos.createTiposVehiculos);
+router.delete('/tiposvehiculos', tipos_vehiculos.deleteTiposVehiculos);
+router.put('/tiposvehiculos', tipos_vehiculos.updateTiposVehiculos);
 
 //*********************LINEAS***************************E
 

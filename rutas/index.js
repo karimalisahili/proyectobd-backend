@@ -21,7 +21,7 @@ router.put('/trabajadores', trabajadores.updateTrabajadores);
 
 //*********************RESPONSABLES************************
 
-//*********************FACTURAS_PROVEEDORES****************
+//*********************FACTURAS_PROVEEDORES CRD****************
 
 //*********************MARCAS_VEHICULOS*******************
 
@@ -35,7 +35,7 @@ router.put('/trabajadores', trabajadores.updateTrabajadores);
 
 //*********************VEHICULOS************************
 
-//*********************FACTURAS_SERVICIOS************************
+//*********************FACTURAS_SERVICIOS CRD************************
 
 //*********************AUTORIZADOS************************
 
@@ -47,17 +47,17 @@ router.put('/trabajadores', trabajadores.updateTrabajadores);
 
 //*********************PRODUCTOS_SERVICIOS************************
 
-//*********************PRODUCTOS_TIENDA************************
+//*********************PRODUCTOS_TIENDA CRD************************
 
 //*********************REQUISICIONES_COMPRA************************
 
-//*********************PAGOS************************
+//*********************PAGOS CRD************************
 
 //*********************RESERVAS************************
 
-//*********************ORDENES_COMPRAS************************
+//*********************ORDENES_COMPRAS CRD************************
 
-//*********************FACTURAS_TIENDAS**************************
+//*********************FACTURAS_TIENDAS CRD**************************
 
 //*********************DESCUENTOS**************************
 

@@ -7,6 +7,7 @@ const trabajadores = require('../controladores/trabajadores');
 const responsables = require('../controladores/responsables');
 const marcas_vehiculos = require('../controladores/marcas_vehiculos');
 const tipos_vehiculos = require('../controladores/tipos_vehiculos');
+const lineas = require('../controladores/lineas');
 
 
 
@@ -42,6 +43,10 @@ router.put('/marcas_vehiculos', marcas_vehiculos.updateMarcas_vehiculos);
 //*********************TIPOS_VEHICULOS******************
 
 //*********************LINEAS***************************
+router.get('/lineas', lineas.getLineas);
+router.post('/lineas', lineas.createLineas);
+router.delete('/lineas', lineas.deleteLineas);
+router.put('/lineas', lineas.updateLineas);
 
 //*********************PROVEEDORES************************
 

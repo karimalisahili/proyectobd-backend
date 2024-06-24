@@ -4,10 +4,11 @@ const router = express.Router();
 // Importar controladores
 const sucursal = require('../controladores/sucursal');
 const trabajadores = require('../controladores/trabajadores');
+const responsables = require('../controladores/responsables');
 
 
 
-//*********************SURCURSAL************************
+//*********************SURCURSALES************************
 router.get('/sucursal', sucursal.getSucursal);
 router.post('/sucursal', sucursal.createSucursal);
 router.delete('/sucursal', sucursal.deleteSucursal);
@@ -19,31 +20,35 @@ router.post('/trabajadores', trabajadores.createTrabajadores);
 router.delete('/trabajadores', trabajadores.deleteTrabajadores);
 router.put('/trabajadores', trabajadores.updateTrabajadores);
 
-//*********************RESPONSABLES******************************
+//*********************RESPONSABLES****************************** K
+router.get('/responsables', responsables.getResponsables);
+router.post('/responsables', responsables.createResponsables);
+router.delete('/responsables', responsables.deleteResponsables);
+router.put('/responsables', responsables.updateResponsables);
 
-//*********************FACTURAS_PROVEEDORES CRD****************
-    
-      
 
-//*********************MARCAS_VEHICULOS*******************
+//*********************FACTURAS_PROVEEDORES CRD**************** E
 
-//*********************TIPOS_VEHICULOS******************
 
-//*********************LINEAS***************************
+//*********************MARCAS_VEHICULOS*******************S
 
-//*********************PROVEEDORES************************
+//*********************TIPOS_VEHICULOS******************K
 
-//*********************MODELOS_VEHICULOS************************
+//*********************LINEAS***************************E
 
-//*********************VEHICULOS************************
+//*********************PROVEEDORES************************S
 
-//*********************FACTURAS_SERVICIOS CRD************************
+//*********************MODELOS_VEHICULOS************************K
 
-//*********************AUTORIZADOS************************
+//*********************VEHICULOS************************E
 
-//*********************ORDENES_SERVICIOS************************
+//*********************FACTURAS_SERVICIOS CRD************************S
 
-//*********************SERVICIOS************************
+//*********************AUTORIZADOS************************K
+
+//*********************ORDENES_SERVICIOS************************E
+
+//*********************SERVICIOS************************S
 
 //*********************PRODUCTOS************************
 

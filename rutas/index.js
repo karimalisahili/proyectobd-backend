@@ -42,6 +42,11 @@ router.delete('/marcas_vehiculos', marcas_vehiculos.deleteMarcas_vehiculos);
 router.put('/marcas_vehiculos', marcas_vehiculos.updateMarcas_vehiculos);
 
 //*********************TIPOS_VEHICULOS******************
+router.get('/tiposvehiculos', tipos_vehiculos.getTiposVehiculos);
+router.post('/tiposvehiculos', tipos_vehiculos.createTiposVehiculos);
+router.delete('/tiposvehiculos', tipos_vehiculos.deleteTiposVehiculos);
+router.put('/tiposvehiculos', tipos_vehiculos.updateTiposVehiculos);
+
 
 //*********************LINEAS***************************
 

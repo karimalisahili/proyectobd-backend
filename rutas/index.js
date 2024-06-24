@@ -4,7 +4,7 @@ const router = express.Router();
 // Importar controladores
 const sucursal = require('../controladores/sucursal');
 const trabajadores = require('../controladores/trabajadores');
-
+const facturas_proveedores= require('../controladores/facturas_proveedores')
 
 
 //*********************SURCURSAL************************
@@ -22,8 +22,9 @@ router.put('/trabajadores', trabajadores.updateTrabajadores);
 //*********************RESPONSABLES******************************
 
 //*********************FACTURAS_PROVEEDORES CRD****************
-    
-      
+ router.get('/facturasproveedores',facturas_proveedores.getFacturaProveedor);   
+ router.post('/facturasproveedores', facturas_proveedores.createFacturaProveedor);   
+ router.delete('/facturasproveedores', facturas_proveedores.deleteFacturaProveedor);  
 
 //*********************MARCAS_VEHICULOS*******************
 

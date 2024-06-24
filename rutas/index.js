@@ -53,7 +53,10 @@ router.put('/tiposvehiculos', tipos_vehiculos.updateTiposVehiculos);
 //*********************PROVEEDORES************************
 
 //*********************MODELOS_VEHICULOS************************
-
+router.get('/modelosvehiculos', modelos_vehiculos.getModelosVehiculos);
+router.post('/modelosvehiculos',modelos_vehiculos.createModeloVehiculo);
+router.delete('/modelosvehiculos',modelos_vehiculos.deleteModeloVehiculo);
+router.put('/modelosvehiculos',modelos_vehiculos.updateModeloVehiculo);
 //*********************VEHICULOS************************
 
 //*********************FACTURAS_SERVICIOS CRD************************

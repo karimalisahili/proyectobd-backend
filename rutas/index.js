@@ -4,6 +4,9 @@ const router = express.Router();
 // Importar controladores
 const sucursal = require('../controladores/sucursal');
 const trabajadores = require('../controladores/trabajadores');
+const responsables = require('../controladores/responsables');
+const marcas_vehiculos = require('../controladores/marcas_vehiculos');
+const tipos_vehiculos = require('../controladores/tipos_vehiculos');
 const facturas_proveedores= require('../controladores/facturas_proveedores')
 
 
@@ -20,6 +23,10 @@ router.delete('/trabajadores', trabajadores.deleteTrabajadores);
 router.put('/trabajadores', trabajadores.updateTrabajadores);
 
 //*********************RESPONSABLES******************************
+router.get('/responsables', responsables.getResponsables);
+router.post('/responsables', responsables.createResponsables);
+router.delete('/responsables', responsables.deleteResponsables);
+router.put('/responsables', responsables.updateResponsables);
 
 //*********************FACTURAS_PROVEEDORES CRD****************
  router.get('/facturasproveedores',facturas_proveedores.getFacturaProveedor);   
@@ -27,6 +34,11 @@ router.put('/trabajadores', trabajadores.updateTrabajadores);
  router.delete('/facturasproveedores', facturas_proveedores.deleteFacturaProveedor);  
 
 //*********************MARCAS_VEHICULOS*******************
+
+router.get('/marcas_vehiculos', marcas_vehiculos.getMarcas_vehiculos);
+router.post('/marcas_vehiculos', marcas_vehiculos.createMarcas_vehiculos);
+router.delete('/marcas_vehiculos', marcas_vehiculos.deleteMarcas_vehiculos);
+router.put('/marcas_vehiculos', marcas_vehiculos.updateMarcas_vehiculos);
 
 //*********************TIPOS_VEHICULOS******************
 

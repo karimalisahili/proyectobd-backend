@@ -7,7 +7,8 @@ const trabajadores = require('../controladores/trabajadores');
 const responsables = require('../controladores/responsables');
 const marcas_vehiculos = require('../controladores/marcas_vehiculos');
 const tipos_vehiculos = require('../controladores/tipos_vehiculos');
-const facturas_proveedores= require('../controladores/facturas_proveedores')
+const facturas_proveedores= require('../controladores/facturas_proveedores');
+const modelos_vehiculos= require('../controladores/modelos_vehiculos');
 
 
 //*********************SURCURSAL************************

@@ -9,6 +9,7 @@ const marcas_vehiculos = require('../controladores/marcas_vehiculos');
 const tipos_vehiculos = require('../controladores/tipos_vehiculos');
 const facturas_proveedores= require('../controladores/facturas_proveedores')
 const lineas = require('../controladores/lineas');
+const proveedores = require('../controladores/proveedores');
 
 
 
@@ -55,6 +56,10 @@ router.delete('/lineas', lineas.deleteLineas);
 router.put('/lineas', lineas.updateLineas);
 
 //*********************PROVEEDORES************************
+router.get('/proveedores', proveedores.getProveedores);
+router.post('/proveedores', proveedores.createProveedores);
+router.delete('/proveedores', proveedores.deleteProveedores);
+router.put('/proveedores', proveedores.updateProveedores);
 
 //*********************MODELOS_VEHICULOS************************
 

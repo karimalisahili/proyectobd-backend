@@ -19,7 +19,7 @@ router.post('/trabajadores', trabajadores.createTrabajadores);
 router.delete('/trabajadores', trabajadores.deleteTrabajadores);
 router.put('/trabajadores', trabajadores.updateTrabajadores);
 
-//*********************RESPONSABLES************************
+//*********************RESPONSABLES******************************
 
 //*********************FACTURAS_PROVEEDORES CRD****************
 

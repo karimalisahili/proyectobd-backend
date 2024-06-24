@@ -22,6 +22,8 @@ router.put('/trabajadores', trabajadores.updateTrabajadores);
 //*********************RESPONSABLES******************************
 
 //*********************FACTURAS_PROVEEDORES CRD****************
+    
+      
 
 //*********************MARCAS_VEHICULOS*******************
 

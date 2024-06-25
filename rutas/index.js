@@ -13,6 +13,7 @@ const lineas = require('../controladores/lineas');
 const proveedores = require('../controladores/proveedores');
 const modelos_vehiculos = require('../controladores/modelos_vehiculos');
 const autorizados = require('../controladores/autorizados');
+const ordenes_servicios = require('../controladores/ordenes_servicios');
 
 
 //*********************SURCURSAL************************
@@ -85,7 +86,10 @@ router.delete('/autorizados',autorizados.deleteAutorizado);
 router.put('/autorizados',autorizados.updateAutorizado);
 
 //*********************ORDENES_SERVICIOS************************
-
+router.get('/ordenesservicios', ordenes_servicios.getOrdenesServicios);
+router.post('/ordenesservicios', ordenes_servicios.createOrdenServicio);
+router.delete('/ordenesservicios', ordenes_servicios.deleteOrdenServicio);
+router.put('/ordenesservicios', ordenes_servicios.updateOrdenServicio);
 //*********************SERVICIOS************************
 
 //*********************PRODUCTOS************************

@@ -32,8 +32,7 @@ exports.createMarcas_vehiculos = (req, res) => {
         }
         console.log('Marca de vehiculo creada con éxito', result);
         res.status(201).send('Marca de vehiculo creada con éxito');
-    }
-    );
+    });
 }
 
 // DELETE function

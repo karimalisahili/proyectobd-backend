@@ -11,7 +11,8 @@ const facturas_proveedores= require('../controladores/facturas_proveedores');
 const vehiculos = require('../controladores/vehiculos');
 const lineas = require('../controladores/lineas');
 const proveedores = require('../controladores/proveedores');
-
+const modelos_vehiculos = require('../controladores/modelos_vehiculos');
+const autorizados = require('../controladores/autorizados');
 
 
 //*********************SURCURSAL************************
@@ -78,6 +79,10 @@ router.put('/vehiculos', vehiculos.updateVehiculos);
 //*********************FACTURAS_SERVICIOS CRD************************
 
 //*********************AUTORIZADOS************************
+router.get('/autorizados', autorizados.getAutorizados);
+router.post('/autorizados', autorizados.createAutorizado);
+router.delete('/autorizados',autorizados.deleteAutorizado);
+router.put('/autorizados',autorizados.updateAutorizado);
 
 //*********************ORDENES_SERVICIOS************************
 

@@ -17,6 +17,8 @@ const login = require('../controladores/login');
 const ordenes_servicios = require('../controladores/ordenes_servicios');
 const servicios = require('../controladores/servicios');
 const productos = require('../controladores/productos');
+const productos_servicios = require('../controladores/productos_servicios');
+const productos_tienda = require('../controladores/productos_tienda');
 
 
 //*********************login************************
@@ -109,8 +111,14 @@ router.delete('/productos', productos.deleteProducto);
 router.put('/productos', productos.updateProducto);
 
 //*********************PRODUCTOS_SERVICIOS************************
+router.get('/productos_servicios', productos_servicios.getProductosServicios);
+router.post('/productos_servicios', productos_servicios.createProductosServicio);
+router.delete('/productos_servicios', productos_servicios.deleteProductosServicio);
 
 //*********************PRODUCTOS_TIENDA CRD************************
+router.get('/productos_tienda', productos_tienda.getProductosTienda);
+router.post('/productos_tienda', productos_tienda.createProductosTienda);
+router.delete('/productos_tienda', productos_tienda.deleteProductosTienda);
 
 //*********************REQUISICIONES_COMPRA************************
 

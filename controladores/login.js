@@ -2,6 +2,7 @@ const { sql, connectionString } = require('../config');
 
 exports.login = (req, res) => {
     const { rifSuc, rifEncargado } = req.body;
+    console.log('Iniciando sesión con los siguientes datos:', rifSuc, rifEncargado);
 
     const sqlQuery = 'SELECT * FROM SUCURSALES WHERE RIFSuc = ? AND Encargado = ?';
 

@@ -16,6 +16,7 @@ const autorizados = require('../controladores/autorizados');
 const login = require('../controladores/login');
 const ordenes_servicios = require('../controladores/ordenes_servicios');
 const servicios = require('../controladores/servicios');
+const productos = require('../controladores/productos');
 
 
 //*********************login************************
@@ -102,6 +103,10 @@ router.delete('/servicios', servicios.deleteServicios);
 router.put('/servicios', servicios.updateServicios);
 
 //*********************PRODUCTOS************************
+router.get('/productos', productos.getProductos);
+router.post('/productos', productos.createProducto);
+router.delete('/productos', productos.deleteProducto);
+router.put('/productos', productos.updateProducto);
 
 //*********************PRODUCTOS_SERVICIOS************************
 

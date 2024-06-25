@@ -13,7 +13,11 @@ const lineas = require('../controladores/lineas');
 const proveedores = require('../controladores/proveedores');
 const modelos_vehiculos = require('../controladores/modelos_vehiculos');
 const autorizados = require('../controladores/autorizados');
+const login = require('../controladores/login');
 
+
+//*********************login************************
+router.post('/login',login.login);
 
 //*********************SURCURSAL************************
 router.get('/sucursal', sucursal.getSucursal);

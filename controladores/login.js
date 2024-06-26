@@ -1,13 +1,13 @@
 const { sql, connectionString } = require('../config');
 
 exports.login = (req, res) => {
-    const { rifSuc, rifEncargado } = req.body;
+    const { rif_sucursal, cedula_encargado } = req.body;
 
-    console.log('Iniciando sesión con los siguientes datos:', rifSuc, rifEncargado);
+    console.log('Iniciando sesión con los siguientes datos:', rif_sucursal, cedula_encargado);
 
     const sqlQuery = 'SELECT * FROM SUCURSALES WHERE RIFSuc = ? AND Encargado = ?';
 
-    sql.query(connectionString, sqlQuery, [rifSuc, rifEncargado], (err, results) => {
+    sql.query(connectionString, sqlQuery, [rif_sucursal, cedula_encargado], (err, results) => {
         if (err) {
             console.error('Error al consultar la base de datos', err);
             res.status(500).json({ message: 'Error al consultar la base de datos', error: err });

@@ -29,11 +29,11 @@ exports.createTrabajadores = (req, res) => {
     sql.query(connectionString, sqlInsert, [Cedula, Nombre, Direccion, Salario, Telefono, RIFSuc], (err, result) => {
         if (err) {
             console.error('Error al crear el trabajador', err);
-            res.status(500).send('Error al crear el trabajador');
+            res.status(500).json({ message: 'Error al crear el trabajador' });
             return;
         }
         console.log('Trabajador creado con éxito');
-        res.status(201).send('Trabajador creado con éxito');
+        res.status(201).json({ message: 'Trabajador creado con éxito' });
     });
 };
 

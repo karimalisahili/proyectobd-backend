@@ -19,21 +19,19 @@ exports.getSucursal = (req, res) => {
 
 
 exports.createSucursal = (req, res) => {
-  // Asumiendo que el cuerpo de la solicitud contiene los campos necesarios para insertar en la tabla SUCURSALES
-  const { RIFSuc, NombreSuc, Ciudad} = req.body;
+  const { RIFSuc, NombreSuc, Ciudad } = req.body;
 
-  // Preparar la sentencia SQL para insertar datos
   const sqlInsert = 'INSERT INTO SUCURSALES (RIFSuc, NombreSuc, Ciudad) VALUES (?, ?, ?)';
 
-  // Ejecutar la sentencia SQL
   sql.query(connectionString, sqlInsert, [RIFSuc, NombreSuc, Ciudad], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
-      res.status(500).send('Error al insertar en la base de datos');
+      res.status(500).json({ message: 'Error al insertar en la base de datos' });
       return;
     }
     console.log('Sucursal creada con éxito', result);
-    res.status(201).send('Sucursal creada con éxito');
+    // Enviar una respuesta en formato JSON
+    res.status(201).json({ message: 'Sucursal creada con éxito' });
   });
 };
 
@@ -61,7 +59,10 @@ exports.deleteSucursal = (req, res) => {
 // PUT operation
 exports.updateSucursal = (req, res) => {
   // Assuming the request body contains the necessary fields to update in the SUCURSALES table
-  const { RIFSuc, NombreSuc, Ciudad, Encargado, FechaInEnc } = req.body;
+  const { RIFSuc, NombreSuc, Ciudad, Encargado } = req.body;
+
+  // Get the current date
+  const FechaInEnc = new Date();
 
   // Prepare the SQL statement to update data
   const sqlUpdate = 'UPDATE SUCURSALES SET NombreSuc = ?, Ciudad = ?, Encargado = ?, FechaInEnc = ? WHERE RIFSuc = ?';
@@ -70,10 +71,10 @@ exports.updateSucursal = (req, res) => {
   sql.query(connectionString, sqlUpdate, [NombreSuc, Ciudad, Encargado, FechaInEnc, RIFSuc], (err, result) => {
     if (err) {
       console.error('Error updating the branch', err);
-      res.status(500).send('Error updating the branch');
+      res.status(500).json({ message: 'Error updating the branch' });
       return;
     }
     console.log('Branch updated successfully', result);
-    res.status(200).send('Branch updated successfully');
+    res.status(200).json({ message: 'Branch updated successfully' });
   });
 };

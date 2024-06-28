@@ -24,6 +24,7 @@ const pagos = require('../controladores/pagos');
 const reservas = require('../controladores/reservas');
 const ordenes_compras = require('../controladores/ordenes_compras');
 const facturas_tiendas = require('../controladores/facturas_tiendas');
+const descuentos = require('../controladores/descuentos');
 
 
 //*********************login************************
@@ -149,7 +150,10 @@ router.get('/facturastiendas', facturas_tiendas.getFacturasTiendas);
 router.post('/facturastiendas', facturas_tiendas.createFacturaTienda);
 router.delete('/facturastiendas', facturas_tiendas.deleteFacturaTienda);
 //*********************DESCUENTOS**************************
-
+router.get('/descuentos', descuentos.getDescuentos);
+router.post('/descuentos', descuentos.createDescuento);
+router.delete('/descuentos', descuentos.deleteDescuento);
+router.put('/descuentos', descuentos.updateDescuento);
 //*********************INVENTARIOS**************************
 
 //*********************ACTIVIDADES**************************

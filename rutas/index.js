@@ -22,6 +22,7 @@ const productos_tienda = require('../controladores/productos_tienda');
 const requisiciones_compra = require('../controladores/requisiciones_compra');
 const pagos = require('../controladores/pagos');
 const reservas = require('../controladores/reservas');
+const ordenes_compras = require('../controladores/ordenes_compras');
 
 
 //*********************login************************
@@ -139,7 +140,9 @@ router.post('/reservas', reservas.createReserva);
 router.delete('/reservas', reservas.deleteReserva);
 router.put('/reservas', reservas.updateReserva );
 //*********************ORDENES_COMPRAS CRD************************
-
+router.get('/ordenescompras', ordenes_compras.getOrdenesCompras);
+router.post('/ordenescompras', ordenes_compras.createOrdenCompra);
+router.delete('/ordenescompras', ordenes_compras.deleteOrdenCompra);
 //*********************FACTURAS_TIENDAS CRD**************************
 
 //*********************DESCUENTOS**************************

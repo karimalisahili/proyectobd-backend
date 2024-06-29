@@ -29,7 +29,7 @@ const inventarios = require('../controladores/inventarios');
 const actividades = require('../controladores/actividades');
 const distribuyen = require('../controladores/distribuyen');
 const registran_fact_prod = require('../controladores/registran_fact_prod');
-
+const reciben_suc_tipov = require('../controladores/recibensuctipov');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -177,8 +177,10 @@ router.get('/registranfactprod', registran_fact_prod.getRegistranFactProd);
 router.post('/registranfactprod', registran_fact_prod.createRegistranFactProd);
 router.delete('/registranfactprod', registran_fact_prod.deleteRegistranFactProd);
 router.put('/registranfactprod', registran_fact_prod.updateRegistranFactProd);
-//*********************RECIBEN_SUC_TIPOV**************************
-
+//*********************RECIBEN_SUC_TIPOV CRD**************************
+router.get('/recibensuctipov', reciben_suc_tipov.getRecibenSucTipoV);
+router.post('/recibensuctipov', reciben_suc_tipov.createRecibenSucTipoV);
+router.delete('/recibensuctipov', reciben_suc_tipov.deleteRecibenSucTipoV);
 //*********************APARTAN_RES_ACT**************************
 
 //*********************TELEFONOS_DUENOS**************************

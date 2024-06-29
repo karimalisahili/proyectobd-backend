@@ -26,7 +26,7 @@ const ordenes_compras = require('../controladores/ordenes_compras');
 const facturas_tiendas = require('../controladores/facturas_tiendas');
 const descuentos = require('../controladores/descuentos');
 const inventarios = require('../controladores/inventarios');
-
+const actividades = require('../controladores/actividades');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -161,7 +161,10 @@ router.post('/inventarios', inventarios.createInventario);
 router.delete('/inventarios', inventarios.deleteInventario);
 router.put('/inventarios', inventarios.updateInventario);
 //*********************ACTIVIDADES**************************
-
+router.get('/actividades', actividades.getActividades);
+router.post('/actividades', actividades.createActividad);
+router.delete('/actividades', actividades.deleteActividad);
+router.put('/actividades', actividades.updateActividad);
 //*********************DISTRIBUYEN**************************
 
 //*********************REGISTRAN_FACT_PROD**************************

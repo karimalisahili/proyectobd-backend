@@ -34,6 +34,7 @@ const apartan_res_act = require('../controladores/apartan_res_act');
 const telefonos_duenos = require('../controladores/telefonos_duenos');
 const mantenimiento_vehiculo = require('../controladores/mantenimiento_vehiculo');
 const contratan_act_ordens_prod_serv = require('../controladores/contratan_act_ordens_prod_serv');
+const facturas_servicios = require('../controladores/facturas_servicios');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -100,6 +101,9 @@ router.delete('/vehiculos', vehiculos.deleteVehiculos);
 router.put('/vehiculos', vehiculos.updateVehiculos);
 
 //*********************FACTURAS_SERVICIOS CRD************************
+router.get('/facturaservicio', facturas_servicios.getFacturasServicios);
+router.post('/facturaservicio', facturas_servicios.createFacturaServicio);
+router.delete('/facturaservicio', facturas_servicios.deleteFacturaServicio);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);

@@ -30,6 +30,7 @@ const actividades = require('../controladores/actividades');
 const distribuyen = require('../controladores/distribuyen');
 const registran_fact_prod = require('../controladores/registran_fact_prod');
 const reciben_suc_tipov = require('../controladores/recibensuctipov');
+const apartan_res_act = require('../controladores/apartan_res_act');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -182,7 +183,10 @@ router.get('/recibensuctipov', reciben_suc_tipov.getRecibenSucTipoV);
 router.post('/recibensuctipov', reciben_suc_tipov.createRecibenSucTipoV);
 router.delete('/recibensuctipov', reciben_suc_tipov.deleteRecibenSucTipoV);
 //*********************APARTAN_RES_ACT**************************
-
+router.get('/apartanresact', apartan_res_act.getApartanResAct);
+router.post('/apartanresact', apartan_res_act.createApartanResAct);
+router.delete('/apartanresact', apartan_res_act.deleteApartanResAct);
+router.put('/apartanresact', apartan_res_act.updateApartanResAct);
 //*********************TELEFONOS_DUENOS**************************
 
 //*********************MANTENIMIENTO_VEHICULO**************************

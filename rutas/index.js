@@ -27,6 +27,7 @@ const facturas_tiendas = require('../controladores/facturas_tiendas');
 const descuentos = require('../controladores/descuentos');
 const inventarios = require('../controladores/inventarios');
 const actividades = require('../controladores/actividades');
+const distribuyen = require('../controladores/distribuyen');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -166,7 +167,9 @@ router.post('/actividades', actividades.createActividad);
 router.delete('/actividades', actividades.deleteActividad);
 router.put('/actividades', actividades.updateActividad);
 //*********************DISTRIBUYEN**************************
-
+router.get('/distribuyen', distribuyen.getDistribuyen);
+router.post('/distribuyen',distribuyen.createDistribuyen);
+router.delete('/distribuyen', distribuyen.deleteDistribuyen);
 //*********************REGISTRAN_FACT_PROD**************************
 
 //*********************RECIBEN_SUC_TIPOV**************************

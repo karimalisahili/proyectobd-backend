@@ -28,6 +28,8 @@ const descuentos = require('../controladores/descuentos');
 const inventarios = require('../controladores/inventarios');
 const actividades = require('../controladores/actividades');
 const distribuyen = require('../controladores/distribuyen');
+const registran_fact_prod = require('../controladores/registran_fact_prod');
+
 
 //*********************login************************
 router.post('/login',login.login);
@@ -171,7 +173,10 @@ router.get('/distribuyen', distribuyen.getDistribuyen);
 router.post('/distribuyen',distribuyen.createDistribuyen);
 router.delete('/distribuyen', distribuyen.deleteDistribuyen);
 //*********************REGISTRAN_FACT_PROD**************************
-
+router.get('/registranfactprod', registran_fact_prod.getRegistranFactProd);
+router.post('/registranfactprod', registran_fact_prod.createRegistranFactProd);
+router.delete('/registranfactprod', registran_fact_prod.deleteRegistranFactProd);
+router.put('/registranfactprod', registran_fact_prod.updateRegistranFactProd);
 //*********************RECIBEN_SUC_TIPOV**************************
 
 //*********************APARTAN_RES_ACT**************************

@@ -32,6 +32,7 @@ const registran_fact_prod = require('../controladores/registran_fact_prod');
 const reciben_suc_tipov = require('../controladores/recibensuctipov');
 const apartan_res_act = require('../controladores/apartan_res_act');
 const telefonos_duenos = require('../controladores/telefonos_duenos');
+const mantenimiento_vehiculo = require('../controladores/mantenimiento_vehiculo');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -194,7 +195,10 @@ router.post('/telefonosduenos', telefonos_duenos.createTelefonoDueno);
 router.delete('/telefonosduenos', telefonos_duenos.deleteTelefonoDueno);
 router.put('/telefonosduenos', telefonos_duenos.updateTelefonoDueno);
 //*********************MANTENIMIENTO_VEHICULO**************************
-
+router.get('/mantenimientovehiculo', mantenimiento_vehiculo.getMantenimientoVehiculo);
+router.post('/mantenimientovehiculo', mantenimiento_vehiculo.createMantenimientoVehiculo);
+router.delete('/mantenimientovehiculo', mantenimiento_vehiculo.deleteMantenimientoVehiculo);
+router.put('/mantenimientovehiculo',mantenimiento_vehiculo.updateMantenimientoVehiculo);
 //*********************CONTRATAN_ACT_ORDENS_PROD_SERV**************************
 
 

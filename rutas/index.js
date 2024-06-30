@@ -21,7 +21,20 @@ const productos_servicios = require('../controladores/productos_servicios');
 const productos_tienda = require('../controladores/productos_tienda');
 const requisiciones_compra = require('../controladores/requisiciones_compra');
 const pagos = require('../controladores/pagos');
-
+const reservas = require('../controladores/reservas');
+const ordenes_compras = require('../controladores/ordenes_compras');
+const facturas_tiendas = require('../controladores/facturas_tiendas');
+const descuentos = require('../controladores/descuentos');
+const inventarios = require('../controladores/inventarios');
+const actividades = require('../controladores/actividades');
+const distribuyen = require('../controladores/distribuyen');
+const registran_fact_prod = require('../controladores/registran_fact_prod');
+const reciben_suc_tipov = require('../controladores/recibensuctipov');
+const apartan_res_act = require('../controladores/apartan_res_act');
+const telefonos_duenos = require('../controladores/telefonos_duenos');
+const mantenimiento_vehiculo = require('../controladores/mantenimiento_vehiculo');
+const contratan_act_ordens_prod_serv = require('../controladores/contratan_act_ordens_prod_serv');
+const facturas_servicios = require('../controladores/facturas_servicios');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -88,6 +101,9 @@ router.delete('/vehiculos', vehiculos.deleteVehiculos);
 router.put('/vehiculos', vehiculos.updateVehiculos);
 
 //*********************FACTURAS_SERVICIOS CRD************************
+router.get('/facturaservicio', facturas_servicios.getFacturasServicios);
+router.post('/facturaservicio', facturas_servicios.createFacturaServicio);
+router.delete('/facturaservicio', facturas_servicios.deleteFacturaServicio);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);
@@ -133,31 +149,66 @@ router.get('/pagos',pagos.getPagos);
 router.post('/pagos',pagos.createPago);
 router.delete('/pagos',pagos.deletePago);
 //*********************RESERVAS************************
-
+router.get('/reservas',reservas.getReservas);
+router.post('/reservas', reservas.createReserva);
+router.delete('/reservas', reservas.deleteReserva);
+router.put('/reservas', reservas.updateReserva );
 //*********************ORDENES_COMPRAS CRD************************
-
+router.get('/ordenescompras', ordenes_compras.getOrdenesCompras);
+router.post('/ordenescompras', ordenes_compras.createOrdenCompra);
+router.delete('/ordenescompras', ordenes_compras.deleteOrdenCompra);
 //*********************FACTURAS_TIENDAS CRD**************************
-
+router.get('/facturastiendas', facturas_tiendas.getFacturasTiendas);
+router.post('/facturastiendas', facturas_tiendas.createFacturaTienda);
+router.delete('/facturastiendas', facturas_tiendas.deleteFacturaTienda);
 //*********************DESCUENTOS**************************
-
+router.get('/descuentos/:RIFSuc', descuentos.getDescuentos);
+router.post('/descuentos', descuentos.createDescuento);
+router.delete('/descuentos', descuentos.deleteDescuento);
+router.put('/descuentos', descuentos.updateDescuento);
 //*********************INVENTARIOS**************************
-
+router.get('/inventarios', inventarios.getInventarios);
+router.post('/inventarios', inventarios.createInventario);
+router.delete('/inventarios', inventarios.deleteInventario);
+router.put('/inventarios', inventarios.updateInventario);
 //*********************ACTIVIDADES**************************
-
+router.get('/actividades', actividades.getActividades);
+router.post('/actividades', actividades.createActividad);
+router.delete('/actividades', actividades.deleteActividad);
+router.put('/actividades', actividades.updateActividad);
 //*********************DISTRIBUYEN**************************
-
+router.get('/distribuyen', distribuyen.getDistribuyen);
+router.post('/distribuyen',distribuyen.createDistribuyen);
+router.delete('/distribuyen', distribuyen.deleteDistribuyen);
 //*********************REGISTRAN_FACT_PROD**************************
-
-//*********************RECIBEN_SUC_TIPOV**************************
-
+router.get('/registranfactprod', registran_fact_prod.getRegistranFactProd);
+router.post('/registranfactprod', registran_fact_prod.createRegistranFactProd);
+router.delete('/registranfactprod', registran_fact_prod.deleteRegistranFactProd);
+router.put('/registranfactprod', registran_fact_prod.updateRegistranFactProd);
+//*********************RECIBEN_SUC_TIPOV CRD**************************
+router.get('/recibensuctipov', reciben_suc_tipov.getRecibenSucTipoV);
+router.post('/recibensuctipov', reciben_suc_tipov.createRecibenSucTipoV);
+router.delete('/recibensuctipov', reciben_suc_tipov.deleteRecibenSucTipoV);
 //*********************APARTAN_RES_ACT**************************
-
+router.get('/apartanresact', apartan_res_act.getApartanResAct);
+router.post('/apartanresact', apartan_res_act.createApartanResAct);
+router.delete('/apartanresact', apartan_res_act.deleteApartanResAct);
+router.put('/apartanresact', apartan_res_act.updateApartanResAct);
 //*********************TELEFONOS_DUENOS**************************
-
+router.get('/telefonosduenos', telefonos_duenos.getTelefonosDuenos);
+router.post('/telefonosduenos', telefonos_duenos.createTelefonoDueno);
+router.delete('/telefonosduenos', telefonos_duenos.deleteTelefonoDueno);
+router.put('/telefonosduenos', telefonos_duenos.updateTelefonoDueno);
 //*********************MANTENIMIENTO_VEHICULO**************************
-
+router.get('/mantenimientovehiculo', mantenimiento_vehiculo.getMantenimientoVehiculo);
+router.post('/mantenimientovehiculo', mantenimiento_vehiculo.createMantenimientoVehiculo);
+router.delete('/mantenimientovehiculo', mantenimiento_vehiculo.deleteMantenimientoVehiculo);
+router.put('/mantenimientovehiculo',mantenimiento_vehiculo.updateMantenimientoVehiculo);
 //*********************CONTRATAN_ACT_ORDENS_PROD_SERV**************************
-
+router.get('/contratanactordensprodserv', contratan_act_ordens_prod_serv.getContratanActOrdensProdServ);
+router.post('/contratanactordensprodserv', contratan_act_ordens_prod_serv.createContratanActOrdensProdServ);
+router.delete('/contratanactordensprodserv', contratan_act_ordens_prod_serv.deleteContratanActOrdensProdServ);
+router.put('/contratanactordensprodserv', contratan_act_ordens_prod_serv.updateContratanActOrdensProdServ);
 
 
 module.exports = router;

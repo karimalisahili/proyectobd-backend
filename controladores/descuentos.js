@@ -2,8 +2,13 @@ const { sql, connectionString } = require('../config'); // Asegúrate de que la 
 
 // GET operation
 exports.getDescuentos = (req, res) => {
-  const sqlSelect = 'SELECT * FROM DESCUENTOS';
-  sql.query(connectionString, sqlSelect, (err, result) => {
+
+  const RIFSuc = req.params.RIFSuc;
+  console.log(RIFSuc);
+
+  const sqlSelect = 'SELECT * FROM DESCUENTOS WHERE RIFSuc = ?';
+
+  sql.query(connectionString, sqlSelect, [RIFSuc], (err, result) => {
     if (err) {
       console.error('Error al obtener los descuentos', err);
       res.status(500).json({ message: 'Error al obtener los descuentos' });

@@ -162,7 +162,7 @@ router.get('/facturastiendas', facturas_tiendas.getFacturasTiendas);
 router.post('/facturastiendas', facturas_tiendas.createFacturaTienda);
 router.delete('/facturastiendas', facturas_tiendas.deleteFacturaTienda);
 //*********************DESCUENTOS**************************
-router.get('/descuentos', descuentos.getDescuentos);
+router.get('/descuentos/:RIFSuc', descuentos.getDescuentos);
 router.post('/descuentos', descuentos.createDescuento);
 router.delete('/descuentos', descuentos.deleteDescuento);
 router.put('/descuentos', descuentos.updateDescuento);

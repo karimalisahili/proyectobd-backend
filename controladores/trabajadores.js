@@ -48,11 +48,11 @@ exports.deleteTrabajadores = (req, res) => {
     sql.query(connectionString, sqlDelete, [Cedula], (err, result) => {
         if (err) {
             console.error('Error al eliminar el trabajador', err);
-            res.status(500).send('Error al eliminar el trabajador');
+            res.status(500).json('Error al eliminar el trabajador');
             return;
         }
         console.log('Trabajador eliminado con éxito');
-        res.status(200).send('Trabajador eliminado con éxito');
+        res.status(201).json('Trabajador eliminado con éxito');
     });
 };
 
@@ -71,10 +71,10 @@ exports.updateTrabajadores = (req, res) => {
     sql.query(connectionString, sqlUpdate, [Nombre, Direccion, Salario, Telefono, RIFSuc, Cedula], (err, result) => {
         if (err) {
             console.error('Error al actualizar el trabajador', err);
-            res.status(500).send('Error al actualizar el trabajador');
+            res.status(500).json('Error al actualizar el trabajador');
             return;
         }
         console.log('Trabajador actualizado con éxito');
-        res.status(200).send('Trabajador actualizado con éxito');
+        res.status(201).json('Trabajador actualizado con éxito');
     });
 };

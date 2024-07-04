@@ -17,13 +17,12 @@ exports.getVehiculos = (req,res) => {
 };
 
 exports.createVehiculos = (req, res) => {
-    const sqlInsert = `INSERT INTO VEHICULOS (Placa, TipoAceite, FechaAdq, CiResp, NumModelo, CodMarca) 
-    VALUES (?, ?, ?, ?, ?, ?)`;
-    const { Placa, TipoAceite, FechaAdq, CiResp, NumModelo, CodMarca} = req.body;
+    const { Placa, TipoAceite, FechaAdq, ciResp, CodMarca, NumModelo } = req.body;
+    const sqlInsert = `INSERT INTO VEHICULOS (Placa, TipoAceite, FechaAdq, CiResp, CodMarca, NumModelo) 
+                       VALUES ('${Placa}', '${TipoAceite}', '${FechaAdq}', '${ciResp}', ${CodMarca}, ${NumModelo})`;
 
-    console.log(req.body);
 
-    sql.query(connectionString, sqlInsert, [Placa, TipoAceite, FechaAdq, CiResp, NumModelo, CodMarca], (err, result) => {
+    sql.query(connectionString, sqlInsert, [Placa, TipoAceite, FechaAdq, ciResp, NumModelo, CodMarca], (err, result) => {
         if (err) {
             console.error('Error al crear el Vehiculo', err);
             res.status(500).json({ message: 'Error al crear el Vehiculo' });

@@ -4,7 +4,6 @@ const { sql, connectionString } = require('../config'); // Asegúrate de que la 
 exports.getDescuentos = (req, res) => {
 
   const RIFSuc = req.params.RIFSuc;
-  console.log(RIFSuc);
 
   const sqlSelect = 'SELECT * FROM DESCUENTOS WHERE RIFSuc = ?';
 

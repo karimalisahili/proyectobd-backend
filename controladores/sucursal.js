@@ -38,7 +38,7 @@ exports.createSucursal = (req, res) => {
 // DELETE operation
 exports.deleteSucursal = (req, res) => {
   // Aquí estamos asumiendo que el ID de la sucursal viene en el parámetro de la URL
-  const  { RIFSuc } = req.body;
+  const { RIFSuc } = req.body;
   
   // Preparar la sentencia SQL para eliminar la sucursal
   const sqlDelete = 'DELETE FROM SUCURSALES WHERE RIFSuc = ?';
@@ -47,13 +47,14 @@ exports.deleteSucursal = (req, res) => {
   sql.query(connectionString, sqlDelete, [RIFSuc], (err, result) => {
     if (err) {
       console.error('Error al eliminar la sucursal', err);
-      res.status(500).send('Error al eliminar la sucursal');
+      // Enviar el error en formato JSON
+      res.status(500).json({ error: 'Error al eliminar la sucursal', details: err });
       return;
     }
     console.log('Sucursal eliminada con éxito', result);
-    res.status(200).send('Sucursal eliminada con éxito');
+    // También puedes optar por enviar la respuesta de éxito en formato JSON
+    res.status(200).json({ message: 'Sucursal eliminada con éxito' });
   });
-  
 };
 
 // PUT operation

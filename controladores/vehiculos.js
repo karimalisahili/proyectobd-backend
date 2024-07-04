@@ -22,7 +22,7 @@ exports.createVehiculos = (req, res) => {
                        VALUES ('${Placa}', '${TipoAceite}', '${FechaAdq}', '${ciResp}', ${CodMarca}, ${NumModelo})`;
 
 
-    sql.query(connectionString, sqlInsert,[Placa, TipoAceite, FechaAdq, ciResp, CodMarca, NumModelo] ,(err, result) => {
+    sql.query(connectionString, sqlInsert, [Placa, TipoAceite, FechaAdq, ciResp, NumModelo, CodMarca], (err, result) => {
         if (err) {
             console.error('Error al crear el Vehiculo', err);
             res.status(500).json({ message: 'Error al crear el Vehiculo' });
@@ -33,7 +33,6 @@ exports.createVehiculos = (req, res) => {
         res.status(201).json({ message: 'Vehiculo creado con éxito' });
     });
 };
-
 exports.deleteVehiculos = (req,res) => {
     const { CodVehiculo } = req.body;
 

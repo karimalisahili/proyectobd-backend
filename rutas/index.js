@@ -46,7 +46,7 @@ router.delete('/sucursal', sucursal.deleteSucursal);
 router.put('/sucursal', sucursal.updateSucursal);
 
 //*********************TRABAJADORES************************
-router.get('/trabajadores', trabajadores.getTrabajadores);
+router.get('/trabajadores/:RIFSuc', trabajadores.getTrabajadores);
 router.post('/trabajadores', trabajadores.createTrabajadores);
 router.delete('/trabajadores', trabajadores.deleteTrabajadores);
 router.put('/trabajadores', trabajadores.updateTrabajadores);

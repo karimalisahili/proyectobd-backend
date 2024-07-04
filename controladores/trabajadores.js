@@ -2,11 +2,14 @@ const {sql, connectionString} = require('../config'); // Asegúrate de que la ru
 
 // GET operation
 exports.getTrabajadores = (req, res) => {
+    const RIFSuc = req.params.RIFSuc;
+    console.log(RIFSuc)
+
   // Preparar la sentencia SQL para obtener todas las trabajadores
-  const sqlSelect = 'SELECT * FROM TRABAJADORES';
+  const sqlSelect = 'SELECT * FROM TRABAJADORES WHERE RIFSuc = ?';
 
   // Ejecutar la sentencia SQL
-  sql.query(connectionString, sqlSelect, (err, result) => {
+  sql.query(connectionString, sqlSelect,[RIFSuc], (err, result) => {
     if (err) {
       console.error('Error al obtener las trabajadores', err);
       res.status(500).send('Error al obtener las trabajadores');

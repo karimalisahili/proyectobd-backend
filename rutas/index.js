@@ -35,6 +35,7 @@ const telefonos_duenos = require('../controladores/telefonos_duenos');
 const mantenimiento_vehiculo = require('../controladores/mantenimiento_vehiculo');
 const contratan_act_ordens_prod_serv = require('../controladores/contratan_act_ordens_prod_serv');
 const facturas_servicios = require('../controladores/facturas_servicios');
+const inventario_view = require('../controladores/inventario_view');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -209,6 +210,9 @@ router.get('/contratanactordensprodserv', contratan_act_ordens_prod_serv.getCont
 router.post('/contratanactordensprodserv', contratan_act_ordens_prod_serv.createContratanActOrdensProdServ);
 router.delete('/contratanactordensprodserv', contratan_act_ordens_prod_serv.deleteContratanActOrdensProdServ);
 router.put('/contratanactordensprodserv', contratan_act_ordens_prod_serv.updateContratanActOrdensProdServ);
+//*********************INVENTARIO_VIEW**************************
+router.get('/inventario_view/:RIFSuc', inventario_view.getInventarios);
+
 
 
 module.exports = router;

@@ -113,10 +113,10 @@ router.delete('/autorizados',autorizados.deleteAutorizado);
 router.put('/autorizados',autorizados.updateAutorizado);
 
 //*********************ORDENES_SERVICIOS************************
-router.get('/ordenesservicios', ordenes_servicios.getOrdenesServicios);
-router.post('/ordenesservicios', ordenes_servicios.createOrdenServicio);
-router.delete('/ordenesservicios', ordenes_servicios.deleteOrdenServicio);
-router.put('/ordenesservicios', ordenes_servicios.updateOrdenServicio);
+router.get('/ordenes_servicios', ordenes_servicios.getOrdenesServicios);
+router.post('/ordenes_servicios', ordenes_servicios.createOrdenServicio);
+router.delete('/ordenes_servicios', ordenes_servicios.deleteOrdenServicio);
+router.put('/ordenes_servicios', ordenes_servicios.updateOrdenServicio);
 
 //*********************SERVICIOS************************
 router.get('/servicios', servicios.getServicios);

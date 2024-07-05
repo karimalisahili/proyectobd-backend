@@ -101,9 +101,9 @@ router.delete('/vehiculos', vehiculos.deleteVehiculos);
 router.put('/vehiculos', vehiculos.updateVehiculos);
 
 //*********************FACTURAS_SERVICIOS CRD************************
-router.get('/facturaservicio', facturas_servicios.getFacturasServicios);
-router.post('/facturaservicio', facturas_servicios.createFacturaServicio);
-router.delete('/facturaservicio', facturas_servicios.deleteFacturaServicio);
+router.get('/facturas_servicios', facturas_servicios.getFacturasServicios);
+router.post('/facturas_servicios', facturas_servicios.createFacturaServicio);
+router.delete('/facturas_servicios', facturas_servicios.deleteFacturaServicio);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);

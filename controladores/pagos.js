@@ -25,7 +25,7 @@ exports.createPago = (req, res) => {
   sql.query(connectionString, sqlInsert, [Fecha, Monto, TipoPago, TipoEfectivo, Referencia, NroTelf, TipoTarjeta, Banco, NumTarjeta, NumFacturaServicio, NumR], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
-      res.status(500).json({ message: 'Error al insertar en la base de datos' });
+      res.status(500).json({ message: 'Error al insertar en la base de datos', error: err });
       return;
     }
     console.log('Pago creado con éxito', result);

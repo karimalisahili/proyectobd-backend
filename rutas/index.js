@@ -128,7 +128,7 @@ router.put('/servicios', servicios.updateServicios);
 router.get('/productos', productos.getProductos);
 router.post('/productos', productos.createProducto);
 router.delete('/productos', productos.deleteProducto);
-router.put('/productos', productos.updateProducto);
+router.put('/productos', productos.updateProducto); 
 
 //*********************PRODUCTOS_SERVICIOS************************
 router.get('/productos_servicios', productos_servicios.getProductosServicios);

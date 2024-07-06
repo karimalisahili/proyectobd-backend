@@ -6,7 +6,7 @@ exports.getAutorizados = (req, res) => {
   sql.query(connectionString, sqlSelect, (err, result) => {
     if (err) {
       console.error('Error al obtener los autorizados', err);
-      res.status(500).send('Error al obtener los autorizados');
+      res.status(500).json('Error al obtener los autorizados');
       return;
     }
     res.status(200).json(result);
@@ -22,10 +22,10 @@ exports.createAutorizado = (req, res) => {
     sql.query(connectionString, sqlInsert, [CIAutorizado, NombreAutorizado], (err, result) => {
       if (err) {
         console.error('Error al insertar en la base de datos', err);
-        res.status(500).send('Error al insertar en la base de datos');
+        res.status(500).json('Error al insertar en la base de datos');
         return;
       }
-      res.status(201).send('Autorizado creado con éxito');
+      res.status(200).json('Autorizado creado con éxito');
     });
   };
   
@@ -38,10 +38,10 @@ exports.createAutorizado = (req, res) => {
     sql.query(connectionString, sqlDelete, [CIAutorizado], (err, result) => {
       if (err) {
         console.error('Error al eliminar el autorizado', err);
-        res.status(500).send('Error al eliminar el autorizado');
+        res.status(500).json('Error al eliminar el autorizado');
         return;
       }
-      res.status(200).send('Autorizado eliminado con éxito');
+      res.status(200).json('Autorizado eliminado con éxito');
     });
   };
   
@@ -54,10 +54,10 @@ exports.createAutorizado = (req, res) => {
     sql.query(connectionString, sqlUpdate, [NombreAutorizado, CIAutorizado], (err, result) => {
       if (err) {
         console.error('Error al actualizar el autorizado', err);
-        res.status(500).send('Error al actualizar el autorizado');
+        res.status(500).json('Error al actualizar el autorizado');
         return;
       }
       console.log('Autorizado actualizado con éxito', result);
-      res.status(200).send('Autorizado actualizado con éxito');
+      res.status(200).json('Autorizado actualizado con éxito');
     });
   };

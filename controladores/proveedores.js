@@ -8,7 +8,7 @@ exports.getProveedores = (req, res) => {
     sql.query(connectionString, sqlSelect, (err, result) => {
         if (err) {
             console.error('Error al obtener los proveedores', err);
-            res.status(500).send('Error al obtener los proveedores');
+            res.status(500).json('Error al obtener los proveedores');
             return;
         }
         console.log('Proveedores obtenidos con éxito', result);
@@ -27,11 +27,11 @@ exports.createProveedores = (req, res) => {
     sql.query(connectionString, sqlInsert, [Rif, RazonSocial, Direccion, TelefonoL, TelefonoC, PersonaCont], (err, result) => {
         if (err) {
             console.error('Error al insertar en la base de datos', err);
-            res.status(500).send('Error al insertar en la base de datos');
+            res.status(500).json('Error al insertar en la base de datos');
             return;
         }
         console.log('Proveedor creado con éxito', result);
-        res.status(201).send('Proveedor creado con éxito');
+        res.status(200).json('Proveedor creado con éxito');
     }
     );
 }
@@ -46,11 +46,11 @@ exports.deleteProveedores = (req, res) => {
     sql.query(connectionString, sqlDelete, [Rif], (err, result) =>{
         if(err){
             console.error('Error al eliminar el Proveedor', err);
-            res.status(500).send('Error al eliminar el Proveedor');
+            res.status(500).json('Error al eliminar el Proveedor');
             return;
         }
         console.log('Proveedor eliminado con éxito', result);
-        res.status(200).send('Proveedor eliminado con éxito');
+        res.status(200).json('Proveedor eliminado con éxito');
     });
 }
 
@@ -64,10 +64,10 @@ exports.updateProveedores = (req, res) => {
     sql.query(connectionString, sqlUpdate, [RazonSocial, Direccion, TelefonoL, TelefonoC, PersonaCont,Rif], (err, result) =>{
         if(err){
             console.error('Error al actualizar el Proveedor', err);
-            res.status(500).send('Error al actualizar el Proveedor');
+            res.status(500).json('Error al actualizar el Proveedor');
             return;
         }
         console.log('Proveedor actualizado con éxito', result);
-        res.status(200).send('Proveedor actualizado con éxito');
+        res.status(200).json('Proveedor actualizado con éxito');
     });
 }

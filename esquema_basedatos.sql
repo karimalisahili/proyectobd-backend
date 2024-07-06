@@ -1,7 +1,7 @@
---CREATE DATABASE tallerdb;
+/*CREATE DATABASE tallerdb;
 
 
-USE tallerdb;
+USE tallerdb;*/
 
 
 -- Crear la tabla SUCURSALES sin la restricci�n de clave for�nea
@@ -11,7 +11,6 @@ CREATE TABLE SUCURSALES (
     Ciudad VARCHAR(70) NOT NULL,
     Encargado VARCHAR(8),
     FechaInEnc DATE
-    FOREIGN KEY (Encargado) REFERENCES TRABAJADORES(Cedula) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 -- Crear la tabla TRABAJADORES con la restricci�n de clave for�nea

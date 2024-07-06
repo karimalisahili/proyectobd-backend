@@ -342,7 +342,6 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
     CodProductoServ INT NOT NULL,
     CantProd INT NOT NULL,
     Precio DECIMAL(10, 2) NOT NULL,
-    CantHoras INT NOT NULL,
     PRIMARY KEY (CodServicio, NroActividad, NroOrenServ, CodProductoServ),
     FOREIGN KEY (CodServicio, NroActividad) REFERENCES ACTIVIDADES(CodServicio, NroActividad) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (NroOrenServ) REFERENCES ORDENES_SERVICIOS(Nro) ON UPDATE NO ACTION ON DELETE NO ACTION,
@@ -407,6 +406,10 @@ WHERE
         FROM V_ServiciosPorMarca SPM2
         WHERE SPM2.TipoServicio = SPM.TipoServicio
     );
+
+
+/* DROP de canthoras
+ALTER TABLE CONTRATAN_ACT_ORDENS_PROD_SERV DROP COLUMN CantHoras*/
 
 
 

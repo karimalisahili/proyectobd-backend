@@ -371,6 +371,39 @@ AS
 
 GO
 
+--Vista aux para la primera consulta de estadísticas
+go
+CREATE VIEW V_ServiciosPorMarca AS
+SELECT 
+    OS.Nombre AS TipoServicio,
+    V.CodMarca,
+    COUNT(*) AS Cantidad
+FROM 
+    ORDENES_SERVICIOS OS,
+    VEHICULOS V
+WHERE 
+    OS.CodVehiculo = V.CodVehiculo
+GROUP BY 
+    OS.Nombre, V.CodMarca;
+
+-- Desde donde voy a buscar la primera consulta de Estadísticas
+
+CREATE VIEW V_Est_Marcas_Servicios AS
+SELECT 
+    SPM.TipoServicio,
+    MV.Nombre AS Marca,
+    SPM.Cantidad
+FROM 
+    V_ServiciosPorMarca SPM,
+    MARCAS_VEHICULOS MV
+WHERE 
+    SPM.CodMarca = MV.CodMarcaVeh
+    AND SPM.Cantidad = (
+        SELECT MAX(SPM2.Cantidad)
+        FROM V_ServiciosPorMarca SPM2
+        WHERE SPM2.TipoServicio = SPM.TipoServicio
+    );
+
 
 /*
 

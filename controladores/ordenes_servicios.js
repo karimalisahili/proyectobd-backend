@@ -6,7 +6,7 @@ exports.getOrdenesServicios = (req, res) => {
   sql.query(connectionString, sqlSelect, (err, result) => {
     if (err) {
       console.error('Error al obtener las órdenes de servicios', err);
-      res.status(500).send('Error al obtener las órdenes de servicios');
+      res.status(500).json('Error al obtener las órdenes de servicios');
       return;
     }
     console.log('Órdenes de servicios obtenidas con éxito', result);
@@ -16,7 +16,7 @@ exports.getOrdenesServicios = (req, res) => {
 
 // POST operation
 exports.createOrdenServicio = (req, res) => {
-  const {FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado } = req.body;
+  const {Nro, FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado } = req.body;
 
   const sqlInsert = `INSERT INTO ORDENES_SERVICIOS 
                      (FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado) 
@@ -25,11 +25,11 @@ exports.createOrdenServicio = (req, res) => {
   sql.query(connectionString, sqlInsert, [ FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
-      res.status(500).send('Error al insertar en la base de datos');
+      res.status(500).json('Error al insertar en la base de datos');
       return;
     }
     console.log('Orden de servicio creada con éxito', result);
-    res.status(201).send('Orden de servicio creada con éxito');
+    res.status(200).json('Orden de servicio creada con éxito');
   });
 };
 
@@ -42,11 +42,11 @@ exports.deleteOrdenServicio = (req, res) => {
   sql.query(connectionString, sqlDelete, [Nro], (err, result) => {
     if (err) {
       console.error('Error al eliminar la orden de servicio', err);
-      res.status(500).send('Error al eliminar la orden de servicio');
+      res.status(500).json('Error al eliminar la orden de servicio');
       return;
     }
     console.log('Orden de servicio eliminada con éxito', result);
-    res.status(200).send('Orden de servicio eliminada con éxito');
+    res.status(200).json('Orden de servicio eliminada con éxito');
   });
 };
 
@@ -61,10 +61,10 @@ exports.updateOrdenServicio = (req, res) => {
   sql.query(connectionString, sqlUpdate, [ FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado, Nro], (err, result) => {
     if (err) {
       console.error('Error al actualizar la orden de servicio', err);
-      res.status(500).send('Error al actualizar la orden de servicio');
+      res.status(500).json('Error al actualizar la orden de servicio');
       return;
     }
     console.log('Orden de servicio actualizada con éxito', result);
-    res.status(200).send('Orden de servicio actualizada con éxito');
+    res.status(200).json('Orden de servicio actualizada con éxito');
   });
 };

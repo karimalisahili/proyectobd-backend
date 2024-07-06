@@ -8,7 +8,7 @@ exports.getServicios = (req, res) => {
     sql.query(connectionString, sqlSelect, (err, result) => {
         if (err) {
             console.error('Error al obtener los servicios', err);
-            res.status(500).send('Error al obtener los servicios');
+            res.status(500).json('Error al obtener los servicios');
             return;
         }
         console.log('Servicios obtenidos con éxito', result);
@@ -20,9 +20,7 @@ exports.getServicios = (req, res) => {
 // POST function
 
 exports.createServicios = (req, res) => {
-
-    console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
-    const {Descripcion, CI_Coord} = req.body;
+    const {CodigoServ, Descripcion, CI_Coord} = req.body;
 
     const sqlInsert = 'INSERT INTO SERVICIOS (Descripcion, CI_Coord) VALUES (?, ?)';
 
@@ -33,7 +31,7 @@ exports.createServicios = (req, res) => {
             return;
         }
         console.log('Servicio creado con éxito', result);
-        res.status(201).json('Servicio creado con éxito');
+        res.status(200).json('Servicio creado con éxito');
     });
 }
 
@@ -47,11 +45,11 @@ exports.deleteServicios = (req, res) => {
     sql.query(connectionString, sqlDelete, [CodigoServ], (err, result) =>{
         if(err){
             console.error('Error al eliminar el Servicio', err);
-            res.status(500).send('Error al eliminar el Servicio');
+            res.status(500).json('Error al eliminar el Servicio');
             return;
         }
         console.log('Servicio eliminado con éxito', result);
-        res.status(200).send('Servicio eliminado con éxito');
+        res.status(200).json('Servicio eliminado con éxito');
     });
 }
 
@@ -65,10 +63,10 @@ exports.updateServicios = (req, res) => {
     sql.query(connectionString, sqlUpdate, [Descripcion, CI_Coord, CodigoServ], (err, result) => {
         if (err) {
             console.error('Error al actualizar el Servicio', err);
-            res.status(500).send('Error al actualizar el Servicio');
+            res.status(500).json('Error al actualizar el Servicio');
             return;
         }
         console.log('Servicio actualizado con éxito', result);
-        res.status(200).send('Servicio actualizado con éxito');
+        res.status(200).json('Servicio actualizado con éxito');
     });
 }    

@@ -16,7 +16,7 @@ exports.getActividades = (req, res) => {
 
 // POST operation
 exports.createActividad = (req, res) => {
-  const { CodServicio, Descripcion, Monto, AntelacionReserva, rifSucursal, capacidad } = req.body;
+  const {NroActividad, CodServicio, Descripcion, Monto, AntelacionReserva, rifSucursal, capacidad } = req.body;
 
   const sqlInsert = `INSERT INTO ACTIVIDADES 
                      (CodServicio, Descripcion, Monto, AntelacionReserva, rifSucursal, capacidad) 
@@ -29,7 +29,7 @@ exports.createActividad = (req, res) => {
       return;
     }
     console.log('Actividad creada con éxito', result);
-    res.status(201).json({ message: 'Actividad creada con éxito' });
+    res.status(200).json({ message: 'Actividad creada con éxito' });
   });
 };
 

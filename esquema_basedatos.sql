@@ -367,7 +367,7 @@ GO
 CREATE VIEW inventario_view
 AS
 
-	SELECT p.CodProd, p.NombreP, i.Existencia
+	SELECT s.RIFSuc,p.CodProd, p.NombreP, i.Existencia
 	FROM PRODUCTOS p, INVENTARIOS i, SUCURSALES s
 	WHERE p.CodProd = i.CodProducto 
 	AND s.RIFSuc = i.RIFSuc

@@ -9,7 +9,6 @@ exports.getAutorizados = (req, res) => {
       res.status(500).send('Error al obtener los autorizados');
       return;
     }
-    console.log('Autorizados obtenidos con éxito', result);
     res.status(200).json(result);
   });
 };
@@ -26,7 +25,6 @@ exports.createAutorizado = (req, res) => {
         res.status(500).send('Error al insertar en la base de datos');
         return;
       }
-      console.log('Autorizado creado con éxito', result);
       res.status(201).send('Autorizado creado con éxito');
     });
   };
@@ -43,7 +41,6 @@ exports.createAutorizado = (req, res) => {
         res.status(500).send('Error al eliminar el autorizado');
         return;
       }
-      console.log('Autorizado eliminado con éxito', result);
       res.status(200).send('Autorizado eliminado con éxito');
     });
   };

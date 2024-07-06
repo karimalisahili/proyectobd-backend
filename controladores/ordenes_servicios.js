@@ -16,13 +16,13 @@ exports.getOrdenesServicios = (req, res) => {
 
 // POST operation
 exports.createOrdenServicio = (req, res) => {
-  const { Nombre, FechaHoraE, FechaHoraSEstimada, CIAutorizado, NumFacturaServ, CodVehiculo, CIEmpleado } = req.body;
+  const {FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado } = req.body;
 
   const sqlInsert = `INSERT INTO ORDENES_SERVICIOS 
-                     (Nombre, FechaHoraE, FechaHoraSEstimada, CIAutorizado, NumFacturaServ, CodVehiculo, CIEmpleado) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                     (FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado) 
+                     VALUES (?, ?, ?, ?, ?)`;
 
-  sql.query(connectionString, sqlInsert, [Nombre, FechaHoraE, FechaHoraSEstimada, CIAutorizado, NumFacturaServ, CodVehiculo, CIEmpleado], (err, result) => {
+  sql.query(connectionString, sqlInsert, [ FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
       res.status(500).send('Error al insertar en la base de datos');
@@ -52,13 +52,13 @@ exports.deleteOrdenServicio = (req, res) => {
 
 // PUT operation
 exports.updateOrdenServicio = (req, res) => {
-  const { Nro, Nombre, FechaHoraE, FechaHoraSEstimada, CIAutorizado, NumFacturaServ, CodVehiculo, CIEmpleado } = req.body;
+  const { Nro, FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado } = req.body;
 
   const sqlUpdate = `UPDATE ORDENES_SERVICIOS SET 
-                     Nombre = ?, FechaHoraE = ?, FechaHoraSEstimada = ?, CIAutorizado = ?, NumFacturaServ = ?, CodVehiculo = ?, CIEmpleado = ?
+                     FechaHoraE = ?, FechaHoraSEstimada = ?, CIAutorizado = ?, CodVehiculo = ?, CIEmpleado = ?
                      WHERE Nro = ?`;
 
-  sql.query(connectionString, sqlUpdate, [Nombre, FechaHoraE, FechaHoraSEstimada, CIAutorizado, NumFacturaServ, CodVehiculo, CIEmpleado, Nro], (err, result) => {
+  sql.query(connectionString, sqlUpdate, [ FechaHoraE, FechaHoraSEstimada, CIAutorizado, CodVehiculo, CIEmpleado, Nro], (err, result) => {
     if (err) {
       console.error('Error al actualizar la orden de servicio', err);
       res.status(500).send('Error al actualizar la orden de servicio');

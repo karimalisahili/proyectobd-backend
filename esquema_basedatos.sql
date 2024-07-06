@@ -408,12 +408,6 @@ WHERE
     );
 
 
-/* DROP de canthoras
-ALTER TABLE CONTRATAN_ACT_ORDENS_PROD_SERV DROP COLUMN CantHoras*/
-
-
-
-
 /*
 
 -- ********************************* TRIGGERS *******************************

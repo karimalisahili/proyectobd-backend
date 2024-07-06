@@ -6,7 +6,7 @@ exports.getModelosVehiculos = (req, res) => {
   sql.query(connectionString, sqlSelect, (err, result) => {
     if (err) {
       console.error('Error al obtener los modelos de vehículos', err);
-      res.status(500).send('Error al obtener los modelos de vehículos');
+      res.status(500).json('Error al obtener los modelos de vehículos');
       return;
     }
     console.log('Modelos de vehículos obtenidos con éxito', result);
@@ -16,7 +16,7 @@ exports.getModelosVehiculos = (req, res) => {
 
 // POST operation
 exports.createModeloVehiculo = (req, res) => {
-    const { CodMarcaV, Descripcion, CantPuestos, Peso, TipoAceite, AceiteCaja, TipoRefri, Octanaje, TipoMant, TiempoUsoMant, KilometrajeMant, CodTipoV } = req.body;
+    const { CodMarcaV,CodConsec, Descripcion, CantPuestos, Peso, TipoAceite, AceiteCaja, TipoRefri, Octanaje, TipoMant, TiempoUsoMant, KilometrajeMant, CodTipoV } = req.body;
   
     const sqlInsert = `INSERT INTO MODELOS_VEHICULOS 
                        (CodMarcaV, Descripcion, CantPuestos, Peso, TipoAceite, AceiteCaja, TipoRefri, Octanaje, TipoMant, TiempoUsoMant, KilometrajeMant, CodTipoV) 
@@ -25,11 +25,11 @@ exports.createModeloVehiculo = (req, res) => {
     sql.query(connectionString, sqlInsert, [CodMarcaV, Descripcion, CantPuestos, Peso, TipoAceite, AceiteCaja, TipoRefri, Octanaje, TipoMant, TiempoUsoMant, KilometrajeMant, CodTipoV], (err, result) => {
       if (err) {
         console.error('Error al insertar en la base de datos', err);
-        res.status(500).send('Error al insertar en la base de datos');
+        res.status(500).json('Error al insertar en la base de datos');
         return;
       }
       console.log('Modelo de vehículo creado con éxito', result);
-      res.status(201).send('Modelo de vehículo creado con éxito');
+      res.status(200).json('Modelo de vehículo creado con éxito');
     });
   };
 
@@ -42,11 +42,11 @@ exports.deleteModeloVehiculo = (req, res) => {
     sql.query(connectionString, sqlDelete, [CodMarcaV, CodConsec], (err, result) => {
       if (err) {
         console.error('Error al eliminar el modelo de vehículo', err);
-        res.status(500).send('Error al eliminar el modelo de vehículo');
+        res.status(500).json('Error al eliminar el modelo de vehículo');
         return;
       }
       console.log('Modelo de vehículo eliminado con éxito', result);
-      res.status(200).send('Modelo de vehículo eliminado con éxito');
+      res.status(200).json('Modelo de vehículo eliminado con éxito');
     });
   };
 
@@ -63,10 +63,10 @@ exports.updateModeloVehiculo = (req, res) => {
     sql.query(connectionString, sqlUpdate, [Descripcion, CantPuestos, Peso, TipoAceite, AceiteCaja, TipoRefri, Octanaje, TipoMant, TiempoUsoMant, KilometrajeMant, CodTipoV, CodMarcaV, CodConsec], (err, result) => {
       if (err) {
         console.error('Error al actualizar el modelo de vehículo', err);
-        res.status(500).send('Error al actualizar el modelo de vehículo');
+        res.status(500).json('Error al actualizar el modelo de vehículo');
         return;
       }
       console.log('Modelo de vehículo actualizado con éxito', result);
-      res.status(200).send('Modelo de vehículo actualizado con éxito');
+      res.status(200).json('Modelo de vehículo actualizado con éxito');
     });
   };

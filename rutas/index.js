@@ -35,6 +35,8 @@ const telefonos_duenos = require('../controladores/telefonos_duenos');
 const mantenimiento_vehiculo = require('../controladores/mantenimiento_vehiculo');
 const contratan_act_ordens_prod_serv = require('../controladores/contratan_act_ordens_prod_serv');
 const facturas_servicios = require('../controladores/facturas_servicios');
+const inventario_view = require('../controladores/inventario_view');
+const estadisticas = require('../controladores/estadisticas');
 
 //*********************login************************
 router.post('/login',login.login);
@@ -101,9 +103,9 @@ router.delete('/vehiculos', vehiculos.deleteVehiculos);
 router.put('/vehiculos', vehiculos.updateVehiculos);
 
 //*********************FACTURAS_SERVICIOS CRD************************
-router.get('/facturaservicio', facturas_servicios.getFacturasServicios);
-router.post('/facturaservicio', facturas_servicios.createFacturaServicio);
-router.delete('/facturaservicio', facturas_servicios.deleteFacturaServicio);
+router.get('/facturas_servicios', facturas_servicios.getFacturasServicios);
+router.post('/facturas_servicios', facturas_servicios.createFacturaServicio);
+router.delete('/facturas_servicios', facturas_servicios.deleteFacturaServicio);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);
@@ -112,10 +114,10 @@ router.delete('/autorizados',autorizados.deleteAutorizado);
 router.put('/autorizados',autorizados.updateAutorizado);
 
 //*********************ORDENES_SERVICIOS************************
-router.get('/ordenesservicios', ordenes_servicios.getOrdenesServicios);
-router.post('/ordenesservicios', ordenes_servicios.createOrdenServicio);
-router.delete('/ordenesservicios', ordenes_servicios.deleteOrdenServicio);
-router.put('/ordenesservicios', ordenes_servicios.updateOrdenServicio);
+router.get('/ordenes_servicios', ordenes_servicios.getOrdenesServicios);
+router.post('/ordenes_servicios', ordenes_servicios.createOrdenServicio);
+router.delete('/ordenes_servicios', ordenes_servicios.deleteOrdenServicio);
+router.put('/ordenes_servicios', ordenes_servicios.updateOrdenServicio);
 
 //*********************SERVICIOS************************
 router.get('/servicios', servicios.getServicios);
@@ -209,6 +211,11 @@ router.get('/contratanactordensprodserv', contratan_act_ordens_prod_serv.getCont
 router.post('/contratanactordensprodserv', contratan_act_ordens_prod_serv.createContratanActOrdensProdServ);
 router.delete('/contratanactordensprodserv', contratan_act_ordens_prod_serv.deleteContratanActOrdensProdServ);
 router.put('/contratanactordensprodserv', contratan_act_ordens_prod_serv.updateContratanActOrdensProdServ);
+//*********************INVENTARIO_VIEW**************************
+router.get('/inventario_view/:RIFSuc', inventario_view.getInventarios);
+
+//********************ESTADISTICAS***************************
+router.get('/estadisticas_marcas_servicio', estadisticas.getMarcasServicios);
 
 
 module.exports = router;

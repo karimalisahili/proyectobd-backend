@@ -16,7 +16,7 @@ exports.getReservas = (req, res) => {
 
 // POST operation
 exports.createReserva = (req, res) => {
-  const { FechaR, Abono, CodVehiculo } = req.body;
+  const {NroR, FechaR, Abono, CodVehiculo } = req.body;
 
   const sqlInsert = `INSERT INTO RESERVAS 
                      (FechaR, Abono, CodVehiculo) 
@@ -29,7 +29,7 @@ exports.createReserva = (req, res) => {
       return;
     }
     console.log('Reserva creada con éxito', result);
-    res.status(201).json({ message: 'Reserva creada con éxito' });
+    res.status(200).json({ message: 'Reserva creada con éxito' });
   });
 };
 

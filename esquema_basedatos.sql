@@ -255,9 +255,9 @@ CREATE TABLE FACTURAS_TIENDAS (
 CREATE TABLE DESCUENTOS (
     RIFSuc VARCHAR(12) NOT NULL,
     NroDesc INT NOT NULL IDENTITY(1,1),
-    LimiteInfe INT NOT NULL CHECK (LimiteInfe > 0),
+    LimiteInfe INT NOT NULL,
     LimiteSup INT NOT NULL,
-    PorcentajeDesc DECIMAL(4,4) NOT NULL CHECK (PorcentajeDesc > 0),
+    PorcentajeDesc DECIMAL(10,2) NOT NULL CHECK (PorcentajeDesc > 0),
     UNIQUE(LimiteInfe,LimiteSup),
 	CHECK (LimiteSup >= LimiteInfe),
     PRIMARY KEY (RIFSuc, NroDesc),
@@ -783,6 +783,7 @@ GO
 
 */
 
+
 GO
 --*********************PROCEDIMIENTOS
 CREATE PROCEDURE GenerarRequisicionesCompra
@@ -826,3 +827,191 @@ BEGIN
     DEALLOCATE productos_cursor;
 END;
 GO
+
+
+GO
+
+CREATE PROCEDURE InsertarContratan
+    @CodServicio INT,
+    @NroActividad INT,
+    @NroOrenServ INT,
+    @CodProductoServ INT,
+    @CantProd INT
+AS
+BEGIN
+    DECLARE @MontoActividad DECIMAL(10, 2);
+    DECLARE @PrecioProducto DECIMAL(10, 2);
+    DECLARE @PrecioTotal DECIMAL(10, 2);
+
+    -- Iniciar una transacción
+    BEGIN TRANSACTION;
+
+    -- Obtener el monto de la actividad
+    SELECT @MontoActividad = Monto
+    FROM ACTIVIDADES
+    WHERE CodServicio = @CodServicio AND NroActividad = @NroActividad;
+
+    -- Obtener el precio del producto
+    SELECT @PrecioProducto = Precio
+    FROM PRODUCTOS
+    WHERE CodProd = @CodProductoServ;
+
+    -- Calcular el precio total (monto de la actividad + precio del producto)
+    SET @PrecioTotal = @MontoActividad + (@PrecioProducto*@CantProd);
+
+    -- Insertar en la tabla CONTRATAN_ACT_ORDENS_PROD_SERV
+    INSERT INTO CONTRATAN_ACT_ORDENS_PROD_SERV (
+        CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio
+    )
+    VALUES (
+        @CodServicio, @NroActividad, @NroOrenServ, @CodProductoServ, @CantProd, @PrecioTotal
+    );
+
+    -- Verificar si todo salió bien y finalizar la transacción
+    IF @@ERROR = 0
+    BEGIN
+        COMMIT TRANSACTION;
+    END
+    ELSE
+    BEGIN
+        ROLLBACK TRANSACTION;
+    END
+END;
+
+GO
+
+/* PARA LA FACTURA DE SERVICIOS
+
+--Procedimiento para calcular el descuento
+GO
+CREATE PROCEDURE ObtenerDescuentoParaResponsable
+    @CIResponsable VARCHAR(8)
+AS
+BEGIN
+    DECLARE @CantidadOrdenes INT;
+    DECLARE @Descuento DECIMAL(10,2);
+
+    -- Contar órdenes de servicio en los últimos 4 meses
+    SELECT @CantidadOrdenes = COUNT(*)
+    FROM ORDENES_SERVICIOS os
+    JOIN VEHICULOS v ON os.CodVehiculo = v.CodVehiculo
+    WHERE v.CiResp = @CIResponsable
+    AND os.FechaHoraE >= DATEADD(MONTH, -4, GETDATE());
+
+    -- Determinar el descuento correspondiente
+    SELECT @Descuento = PorcentajeDesc
+    FROM DESCUENTOS
+    WHERE @CantidadOrdenes BETWEEN LimiteInfe AND LimiteSup;
+
+    -- Devolver el descuento
+    SELECT @Descuento AS Descuento;
+END
+
+EXECUTE ObtenerDescuentoParaResponsable @CIResponsable = 30212401
+
+SELECT * FROM VEHICULOS
+
+--PARA FACTURA....
+
+GO
+CREATE PROCEDURE ObtenerDatosOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    SELECT 
+        os.Nro AS 'Nro ORDEN DE SERVICIO',
+        v.CodVehiculo AS 'CODIGO DE VEHICULO',
+        r.NombreResponsable AS 'Nombre Responsable',
+        r.CIResponsable AS 'CI. Responsable'
+    FROM ORDENES_SERVICIOS os
+    INNER JOIN VEHICULOS v ON os.CodVehiculo = v.CodVehiculo
+    INNER JOIN RESPONSABLES r ON v.CiResp = r.CIResponsable
+    WHERE os.Nro = @NroOrdenServicio;
+END;
+
+EXECUTE ObtenerDatosOrdenServicio @NroOrdenServicio = 1
+
+--OBTENER SERVICIOS
+GO 
+CREATE PROCEDURE ObtenerServiciosOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    SELECT 
+        caos.CodServicio AS 'COD',
+        s.Descripcion AS 'DESCRIPCION'
+    FROM CONTRATAN_ACT_ORDENS_PROD_SERV caos
+    INNER JOIN SERVICIOS s ON caos.CodServicio = s.CodigoServ
+    WHERE caos.NroOrenServ = @NroOrdenServicio;
+END;
+
+EXECUTE ObtenerServiciosOrdenServicio @NroOrdenServicio = 1
+
+--OBTENER ACTIVIDADES
+GO
+CREATE PROCEDURE ObtenerActividadesOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    SELECT 
+        a.CodServicio AS 'COD',
+        a.NroActividad AS 'COD ACTIVIDAD',
+        a.Descripcion AS 'DESCRIPCION',
+        a.Monto AS 'MONTO'
+    FROM CONTRATAN_ACT_ORDENS_PROD_SERV caos
+    INNER JOIN ACTIVIDADES a ON caos.CodServicio = a.CodServicio AND caos.NroActividad = a.NroActividad
+    WHERE caos.NroOrenServ = @NroOrdenServicio;
+END;
+
+EXECUTE ObtenerActividadesOrdenServicio @NroOrdenServicio = 1
+
+--OBTENER PRODUCTOS
+GO
+CREATE PROCEDURE ObtenerProductosOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    SELECT 
+        p.NombreP AS 'Productos'
+    FROM CONTRATAN_ACT_ORDENS_PROD_SERV caos
+    INNER JOIN PRODUCTOS p ON caos.CodProductoServ = p.CodProd
+    WHERE caos.NroOrenServ = @NroOrdenServicio;
+END;
+
+EXECUTE ObtenerProductosOrdenServicio @NroOrdenServicio = 1
+
+--OBTENER DESCUENTO
+GO
+CREATE PROCEDURE ObtenerDescuentoPorOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    DECLARE @CIResponsable VARCHAR(8);
+    DECLARE @CantidadOrdenes INT;
+    DECLARE @Descuento DECIMAL(10,2);
+
+    -- Obtener el CIResponsable a partir del NroOrdenServicio
+    SELECT @CIResponsable = r.CIResponsable
+    FROM ORDENES_SERVICIOS os
+    INNER JOIN VEHICULOS v ON os.CodVehiculo = v.CodVehiculo
+    INNER JOIN RESPONSABLES r ON v.CiResp = r.CIResponsable
+    WHERE os.Nro = @NroOrdenServicio;
+
+    -- Contar órdenes de servicio en los últimos 4 meses
+    SELECT @CantidadOrdenes = COUNT(*)
+    FROM ORDENES_SERVICIOS os
+    JOIN VEHICULOS v ON os.CodVehiculo = v.CodVehiculo
+    WHERE v.CiResp = @CIResponsable
+    AND os.FechaHoraE >= DATEADD(MONTH, -4, GETDATE());
+
+    -- Determinar el descuento correspondiente
+    SELECT @Descuento = PorcentajeDesc
+    FROM DESCUENTOS
+    WHERE @CantidadOrdenes BETWEEN LimiteInfe AND LimiteSup;
+
+    -- Devolver el descuento
+    SELECT @Descuento AS Descuento;
+END;
+
+EXECUTE ObtenerDescuentoPorOrdenServicio @NroOrdenServicio = 1
+*/

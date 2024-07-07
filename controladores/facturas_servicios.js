@@ -2,8 +2,12 @@ const { sql, connectionString } = require('../config'); // Asegúrate de que la 
 
 // GET operation
 exports.getFacturasServicios = (req, res) => {
-  const sqlSelect = 'SELECT * FROM FACTURAS_SERVICIOS';
-  sql.query(connectionString, sqlSelect, (err, result) => {
+  const CodOrden = req.params.CodOrden;
+  console.log(CodOrden);
+
+  const sqlSelect = 'SELECT * FROM FACTURAS_SERVICIOS WHERE CodOrd = ?';
+
+  sql.query(connectionString, sqlSelect, [CodOrden], (err, result) => {
     if (err) {
       console.error('Error al obtener los registros de FACTURAS_SERVICIOS', err);
       res.status(500).json({ message: 'Error al obtener los registros de FACTURAS_SERVICIOS' });
@@ -16,13 +20,13 @@ exports.getFacturasServicios = (req, res) => {
 
 // POST operation
 exports.createFacturaServicio = (req, res) => {
-  const { Fecha, Monto, Descuento } = req.body;
+  const { CodOrd, Fecha, Monto, Descuento } = req.body;
 
   const sqlInsert = `INSERT INTO FACTURAS_SERVICIOS 
-                     (Fecha, Monto, Descuento) 
-                     VALUES (?, ?, ?)`;
+                     (CodOrd Fecha, Monto, Descuento) 
+                     VALUES (?,?, ?, ?)`;
 
-  sql.query(connectionString, sqlInsert, [Fecha, Monto, Descuento], (err, result) => {
+  sql.query(connectionString, sqlInsert, [CodOrd, Fecha, Monto, Descuento], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
       res.status(500).json({ message: 'Error al insertar en la base de datos' });

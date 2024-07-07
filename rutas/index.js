@@ -106,6 +106,7 @@ router.put('/vehiculos', vehiculos.updateVehiculos);
 router.get('/facturas_servicios', facturas_servicios.getFacturasServicios);
 router.post('/facturas_servicios', facturas_servicios.createFacturaServicio);
 router.delete('/facturas_servicios', facturas_servicios.deleteFacturaServicio);
+router.get('/datosOrdenServicio/:nroOrden', facturas_servicios.getDatosOrdenServicio);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);

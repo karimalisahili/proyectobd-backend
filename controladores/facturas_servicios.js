@@ -14,6 +14,23 @@ exports.getFacturasServicios = (req, res) => {
   });
 };
 
+// GET operation for ObtenerDatosOrdenServicio corrected
+exports.getDatosOrdenServicio = (req, res) => {
+  const { nroOrden } = req.params; // Assuming nroOrden is passed as a URL parameter
+
+  const sqlProcedureCall = 'EXECUTE ObtenerDatosOrdenServicio @NroOrdenServicio = ?';
+
+  sql.query(connectionString, sqlProcedureCall, [nroOrden], (err, result) => {
+    if (err) {
+      console.error('Error al obtener los datos de la orden de servicio', err);
+      res.status(500).json({ message: 'Error al obtener los datos de la orden de servicio' });
+      return;
+    }
+    console.log('Datos de la orden de servicio obtenidos con éxito', result);
+    res.status(200).json(result);
+  });
+};
+
 // POST operation
 exports.createFacturaServicio = (req, res) => {
   const { Fecha, Monto, Descuento } = req.body;

@@ -422,36 +422,7 @@ WHERE
     );
 
 
-<<<<<<< HEAD
 */
-=======
-/*TRIGGER para Productos*/
-
-CREATE TRIGGER tipo_producto_trigger
-ON PRODUCTOS
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @TipoPro VARCHAR(10);
-    DECLARE @CodProd INT;
-
-    SELECT @TipoPro = TipoPro, @CodProd = CodProd
-    FROM INSERTED;
-
-    IF @TipoPro = 'Servicio'
-    BEGIN
-        INSERT INTO PRODUCTOS_SERVICIOS (CodProd)
-        VALUES (@CodProd);
-    END
-    ELSE
-    BEGIN
-        INSERT INTO PRODUCTOS_TIENDA (CodProd)
-        VALUES (@CodProd);
-    END
-END;
-
-drop TRIGGER tipo_producto_trigger
->>>>>>> bb4acf54ab07e99ef61dcf6d7c8050dc10ac2f2f
 /*
 
 -- ********************************* TRIGGERS *******************************

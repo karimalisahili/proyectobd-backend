@@ -207,10 +207,10 @@ router.post('/mantenimientovehiculo', mantenimiento_vehiculo.createMantenimiento
 router.delete('/mantenimientovehiculo', mantenimiento_vehiculo.deleteMantenimientoVehiculo);
 router.put('/mantenimientovehiculo',mantenimiento_vehiculo.updateMantenimientoVehiculo);
 //*********************CONTRATAN_ACT_ORDENS_PROD_SERV**************************
-router.get('/contratanactordensprodserv', contratan_act_ordens_prod_serv.getContratanActOrdensProdServ);
-router.post('/contratanactordensprodserv', contratan_act_ordens_prod_serv.createContratanActOrdensProdServ);
-router.delete('/contratanactordensprodserv', contratan_act_ordens_prod_serv.deleteContratanActOrdensProdServ);
-router.put('/contratanactordensprodserv', contratan_act_ordens_prod_serv.updateContratanActOrdensProdServ);
+router.get('/contratan_act_ordens_prod_serv', contratan_act_ordens_prod_serv.getContratanActOrdensProdServ);
+router.post('/contratan_act_ordens_prod_serv', contratan_act_ordens_prod_serv.createContratanActOrdensProdServ);
+router.delete('/contratan_act_ordens_prod_serv', contratan_act_ordens_prod_serv.deleteContratanActOrdensProdServ);
+router.put('/contratan_act_ordens_prod_serv', contratan_act_ordens_prod_serv.updateContratanActOrdensProdServ);
 //*********************INVENTARIO_VIEW**************************
 router.get('/inventario_view/:RIFSuc', inventario_view.getInventarios);
 

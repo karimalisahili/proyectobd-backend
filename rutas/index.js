@@ -106,6 +106,11 @@ router.put('/vehiculos', vehiculos.updateVehiculos);
 router.get('/facturas_servicios', facturas_servicios.getFacturasServicios);
 router.post('/facturas_servicios', facturas_servicios.createFacturaServicio);
 router.delete('/facturas_servicios', facturas_servicios.deleteFacturaServicio);
+router.get('/datosOrdenServicio/:nroOrden', facturas_servicios.getDatosOrdenServicio);
+router.get('/datosServicios/:nroOrden', facturas_servicios.getDatosServicios);
+router.get('/datosActividades/:nroOrden', facturas_servicios.getDatosActividades);
+router.get('/datosProductos/:nroOrden', facturas_servicios.getDatosProductos);
+router.get('/datosDescuento/:nroOrden', facturas_servicios.getDatosDescuento);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);
@@ -160,9 +165,10 @@ router.get('/ordenescompras', ordenes_compras.getOrdenesCompras);
 router.post('/ordenescompras', ordenes_compras.createOrdenCompra);
 router.delete('/ordenescompras', ordenes_compras.deleteOrdenCompra);
 //*********************FACTURAS_TIENDAS CRD**************************
-router.get('/facturastiendas', facturas_tiendas.getFacturasTiendas);
-router.post('/facturastiendas', facturas_tiendas.createFacturaTienda);
-router.delete('/facturastiendas', facturas_tiendas.deleteFacturaTienda);
+router.get('/facturas_tiendas', facturas_tiendas.getFacturasTiendas);
+router.post('/facturas_tiendas', facturas_tiendas.createFacturaTienda);
+router.delete('/facturas_tiendas', facturas_tiendas.deleteFacturaTienda);
+router.get('/facturas_tiendas_descuento/:CIResponsable', facturas_tiendas.getDescuentosxResponsable);
 //*********************DESCUENTOS**************************
 router.get('/descuentos/:RIFSuc', descuentos.getDescuentos);
 router.post('/descuentos', descuentos.createDescuento);

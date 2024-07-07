@@ -18,19 +18,31 @@ exports.getContratanActOrdensProdServ = (req, res) => {
 exports.createContratanActOrdensProdServ = (req, res) => {
   const { CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio} = req.body;
 
-  const sqlInsert = `INSERT INTO CONTRATAN_ACT_ORDENS_PROD_SERV 
-                     (CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio) 
-                     VALUES (?, ?, ?, ?, ?, ?)`;
+  const sqlProcedure = `EXEC InsertarContratan @CodServicio = ?, @NroActividad = ?, @NroOrenServ = ?, @CodProductoServ = ?, @CantProd = ?;`;
 
-  sql.query(connectionString, sqlInsert, [CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio], (err, result) => {
-    if (err) {
-      console.error('Error al insertar en la base de datos', err);
-      res.status(500).json({ message: 'Error al insertar en la base de datos aqui' });
-      return;
+  let responseSent = false;
+
+  try{
+    sql.query(connectionString, sqlProcedure, [CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd], (err, result) => {
+      if (!responseSent) {
+        if (err) {
+          console.error('Error al ejecutar el procedimiento almacenado', err);
+          res.status(500).json({ message: 'Error al ejecutar el procedimiento almacenado' });
+          responseSent = true;
+          return;
+        }
+        console.log('Procedimiento almacenado ejecutado con éxito', result);
+        res.status(200).json({ message: 'Procedimiento almacenado ejecutado con éxito' });
+        responseSent = true;
+      }
+    });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    if (!responseSent) {
+      res.status(500).json({ message: 'Unexpected error occurred' });
+      responseSent = true;
     }
-    console.log('Registro de CONTRATAN_ACT_ORDENS_PROD_SERV creado con éxito', result);
-    res.status(200).json({ message: 'Registro de CONTRATAN_ACT_ORDENS_PROD_SERV creado con éxito' });
-  });
+  }
 };
 
 // DELETE operation

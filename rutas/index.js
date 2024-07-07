@@ -141,7 +141,7 @@ router.post('/productos_tienda', productos_tienda.createProductosTienda);
 router.delete('/productos_tienda', productos_tienda.deleteProductosTienda);
 
 //*********************REQUISICIONES_COMPRA************************
-router.get('/requisiciones_compra', requisiciones_compra.getRequisicionesCompra);
+router.get('/requisiciones_compra/:RIFSuc', requisiciones_compra.getRequisicionesCompra);
 router.post('/requisiciones_compra', requisiciones_compra.createRequisicionCompra);
 router.delete('/requisiciones_compra', requisiciones_compra.deleteRequisicionCompra);
 router.put('/requisiciones_compra', requisiciones_compra.updateRequisicionCompra);

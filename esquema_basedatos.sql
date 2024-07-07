@@ -201,39 +201,43 @@ CREATE TABLE PAGOS (
 
 -- Tabla REQUISICIONES_COMPRA
 CREATE TABLE REQUISICIONES_COMPRA (
+    RIFSuc VARCHAR(12) NOT NULL,
     IdReq INT IDENTITY(1,1),
     CodProd INT NOT NULL,
     CantProd INT NOT NULL CHECK (CantProd > 0),
     Fecha DATE NOT NULL,
-    PRIMARY KEY (IdReq, CodProd),
+    PRIMARY KEY (IdReq, CodProd, RIFSuc),
+    FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (CodProd) REFERENCES PRODUCTOS(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
 -- Tabla ORDENES_COMPRAS ajustada para incluir CodProd
 CREATE TABLE ORDENES_COMPRAS (
+    RIFSuc VARCHAR(12) NOT NULL,
     CodOrden INT NOT NULL IDENTITY(1,1),
     CodRequiCom INT NOT NULL,
     CodProd INT NOT NULL, -- Agregado para formar parte de la llave primaria compuesta
     RIFProv VARCHAR(12) NOT NULL,
     Precio DECIMAL(10, 2) NOT NULL CHECK (Precio > 0),
-    RIFSuc VARCHAR(12) NOT NULL,
-    PRIMARY KEY(CodOrden, CodRequiCom, CodProd),
-    FOREIGN KEY (CodRequiCom, CodProd) REFERENCES REQUISICIONES_COMPRA(IdReq, CodProd) ON UPDATE NO ACTION ON DELETE NO ACTION,
+    PRIMARY KEY(RIFSuc,CodOrden, CodRequiCom, CodProd),
+    FOREIGN KEY (CodRequiCom, CodProd, RIFSuc) REFERENCES REQUISICIONES_COMPRA(IdReq, CodProd,RIFSuc) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (RIFProv) REFERENCES PROVEEDORES(Rif) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- Tabla FACTURAS_PROVEEDORES ajustada para incluir todos los componentes de la llave primaria compuesta
+
+-- Tabla FACTURAS_PROVEEDORES ajustada para incluir todos los componentes de la llave primaria compuestaa
 CREATE TABLE FACTURAS_PROVEEDORES (
     NumFact INT NOT NULL PRIMARY KEY,
     Monto DECIMAL(10, 2) NOT NULL CHECK (Monto > 0),
     Fecha DATE NOT NULL,
+    RIFSuc VARCHAR(12) NOT NULL,
     CodOrden INT NOT NULL,
     CodRequiCom INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
     CodProd INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
-    FOREIGN KEY (CodOrden, CodRequiCom, CodProd) REFERENCES ORDENES_COMPRAS(CodOrden, CodRequiCom, CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
+    FOREIGN KEY (RIFSuc,CodOrden, CodRequiCom, CodProd) REFERENCES ORDENES_COMPRAS(RIFSuc,CodOrden, CodRequiCom, CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
+USE tallerdb;
 
 -- Tabla FACTURAS_TIENDAS
 CREATE TABLE FACTURAS_TIENDAS (
@@ -374,6 +378,10 @@ AS
 
 GO
 
+
+
+
+/*
 --Vista aux para la primera consulta de estadísticas
 go
 CREATE VIEW V_ServiciosPorMarca AS
@@ -408,6 +416,7 @@ WHERE
     );
 
 
+*/
 /*
 
 -- ********************************* TRIGGERS *******************************
@@ -767,3 +776,47 @@ END;
 GO
 
 */
+
+GO
+--*********************PROCEDIMIENTOS
+CREATE PROCEDURE GenerarRequisicionesCompra
+    @RIFSuc VARCHAR(12)
+AS
+BEGIN
+    DECLARE @CodProd INT;
+    DECLARE @Minimo INT;
+    DECLARE @Existencia INT;
+    DECLARE @CantidadAOrdenar INT;
+    DECLARE @FechaActual DATE = GETDATE();
+
+    DECLARE productos_cursor CURSOR FOR
+        SELECT p.CodProd, p.Minimo, ISNULL(i.Existencia, 0) AS Existencia
+        FROM PRODUCTOS p
+        LEFT JOIN INVENTARIOS i ON p.CodProd = i.CodProducto AND i.RIFSuc = @RIFSuc;
+
+    OPEN productos_cursor;
+
+    FETCH NEXT FROM productos_cursor INTO @CodProd, @Minimo, @Existencia;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Calcular la cantidad a ordenar
+        SET @CantidadAOrdenar = @Minimo - @Existencia;
+        
+        IF @CantidadAOrdenar > 0
+        BEGIN
+            -- Calcular la cantidad para que la existencia quede en 25% del mínimo
+            SET @CantidadAOrdenar = CEILING(@Minimo * 1.25);
+
+            -- Insertar una nueva requisición de compra
+            INSERT INTO REQUISICIONES_COMPRA (RIFSuc, CodProd, CantProd, Fecha)
+            VALUES (@RIFSuc, @CodProd, @CantidadAOrdenar, @FechaActual);
+        END
+
+        FETCH NEXT FROM productos_cursor INTO @CodProd, @Minimo, @Existencia;
+    END
+
+    CLOSE productos_cursor;
+    DEALLOCATE productos_cursor;
+END;
+GO

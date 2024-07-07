@@ -1,5 +1,3 @@
---DROP DATABASE tallerdb
-
 --CREATE DATABASE tallerdb;
 
 
@@ -36,12 +34,6 @@ CREATE TABLE RESPONSABLES (
     NombreResponsable VARCHAR(30) NOT NULL
 );
 
--- Tabla FACTURAS_PROVEEDORES
-CREATE TABLE FACTURAS_PROVEEDORES (
-    NumFact INT NOT NULL PRIMARY KEY,
-    Monto DECIMAL(10, 2) NOT NULL CHECK (Monto > 0),
-    Fecha DATE NOT NULL
-);
 
 -- Tabla MARCAS_VEHICULOS
 CREATE TABLE MARCAS_VEHICULOS (
@@ -177,15 +169,6 @@ CREATE TABLE PRODUCTOS_TIENDA (
 );
 
 
--- Tabla REQUISICIONES_COMPRA
-CREATE TABLE REQUISICIONES_COMPRA (
-    IdReq INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-    Fecha DATE NOT NULL,
-    CantProd INT NOT NULL CHECK (CantProd > 0),
-    CodProd INT NOT NULL,
-    FOREIGN KEY (CodProd) REFERENCES PRODUCTOS(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
-);
-
 -- Tabla RESERVAS
 CREATE TABLE RESERVAS (
     NroR INT NOT NULL PRIMARY KEY IDENTITY(1,1),
@@ -214,23 +197,45 @@ CREATE TABLE PAGOS (
 );
 
 
-
-
--- Tabla ORDENES_COMPRAS
-CREATE TABLE ORDENES_COMPRAS (
-    CodOrden INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-    NumFactProv INT NOT NULL,
-    RIFProv VARCHAR(12) NOT NULL,
-    CodRequiCom INT NOT NULL,
-    Precio DECIMAL(10, 2) NOT NULL CHECK (Precio > 0),
-    CantidadProd INT NOT NULL CHECK (CantidadProd > 0),
+-- Tabla REQUISICIONES_COMPRA
+CREATE TABLE REQUISICIONES_COMPRA (
     RIFSuc VARCHAR(12) NOT NULL,
-    FOREIGN KEY (NumFactProv) REFERENCES FACTURAS_PROVEEDORES(NumFact) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY (RIFProv) REFERENCES PROVEEDORES(Rif) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY (CodRequiCom) REFERENCES REQUISICIONES_COMPRA(IdReq) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE
+    IdReq INT IDENTITY(1,1),
+    CodProd INT NOT NULL,
+    CantProd INT NOT NULL CHECK (CantProd > 0),
+    Fecha DATE NOT NULL,
+    PRIMARY KEY (IdReq, CodProd, RIFSuc),
+    FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (CodProd) REFERENCES PRODUCTOS(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
+-- Tabla ORDENES_COMPRAS ajustada para incluir CodProd
+CREATE TABLE ORDENES_COMPRAS (
+    RIFSuc VARCHAR(12) NOT NULL,
+    CodOrden INT NOT NULL IDENTITY(1,1),
+    CodRequiCom INT NOT NULL,
+    CodProd INT NOT NULL, -- Agregado para formar parte de la llave primaria compuesta
+    RIFProv VARCHAR(12) NOT NULL,
+    Precio DECIMAL(10, 2) NOT NULL CHECK (Precio > 0),
+    PRIMARY KEY(RIFSuc,CodOrden, CodRequiCom, CodProd),
+    FOREIGN KEY (CodRequiCom, CodProd, RIFSuc) REFERENCES REQUISICIONES_COMPRA(IdReq, CodProd,RIFSuc) ON UPDATE NO ACTION ON DELETE NO ACTION,
+    FOREIGN KEY (RIFProv) REFERENCES PROVEEDORES(Rif) ON UPDATE NO ACTION ON DELETE NO ACTION,
+);
+
+
+-- Tabla FACTURAS_PROVEEDORES ajustada para incluir todos los componentes de la llave primaria compuestaa
+CREATE TABLE FACTURAS_PROVEEDORES (
+    NumFact INT NOT NULL PRIMARY KEY,
+    Monto DECIMAL(10, 2) NOT NULL CHECK (Monto > 0),
+    Fecha DATE NOT NULL,
+    RIFSuc VARCHAR(12) NOT NULL,
+    CodOrden INT NOT NULL,
+    CodRequiCom INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
+    CodProd INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
+    FOREIGN KEY (RIFSuc,CodOrden, CodRequiCom, CodProd) REFERENCES ORDENES_COMPRAS(RIFSuc,CodOrden, CodRequiCom, CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
+);
+
+USE tallerdb;
 
 -- Tabla FACTURAS_TIENDAS
 CREATE TABLE FACTURAS_TIENDAS (
@@ -249,7 +254,7 @@ CREATE TABLE FACTURAS_TIENDAS (
 CREATE TABLE DESCUENTOS (
     RIFSuc VARCHAR(12) NOT NULL,
     NroDesc INT NOT NULL IDENTITY(1,1),
-    LimiteInfe INT NOT NULL CHECK (LimiteInfe > 0),
+    LimiteInfe INT NOT NULL,
     LimiteSup INT NOT NULL,
     PorcentajeDesc DECIMAL(4,4) NOT NULL CHECK (PorcentajeDesc > 0),
     UNIQUE(LimiteInfe,LimiteSup),
@@ -339,7 +344,6 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
     CodProductoServ INT NOT NULL,
     CantProd INT NOT NULL,
     Precio DECIMAL(10, 2) NOT NULL,
-    CantHoras INT NOT NULL,
     PRIMARY KEY (CodServicio, NroActividad, NroOrenServ, CodProductoServ),
     FOREIGN KEY (CodServicio, NroActividad) REFERENCES ACTIVIDADES(CodServicio, NroActividad) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (NroOrenServ) REFERENCES ORDENES_SERVICIOS(Nro) ON UPDATE NO ACTION ON DELETE NO ACTION,
@@ -359,80 +363,65 @@ CREATE TABLE INVENTARIOS (
 
 
 
--- Eliminar la clave foránea existente y la columna NumFacturaServ de ORDENES_SERVICIOS
-ALTER TABLE ORDENES_SERVICIOS DROP CONSTRAINT FK_ORDENES_SERVICIOS_FACTURAS_SERVICIOS; -- Asumiendo el nombre de la FK
-ALTER TABLE ORDENES_SERVICIOS DROP COLUMN NumFacturaServ;
-
--- Agregar una nueva columna en FACTURAS_SERVICIOS para establecer la relación
-ALTER TABLE FACTURAS_SERVICIOS ADD NroOrdenServ INT NOT NULL;
-
--- Establecer la nueva columna como clave foránea hacia ORDENES_SERVICIOS
-ALTER TABLE FACTURAS_SERVICIOS
-ADD CONSTRAINT FK_FACTURAS_SERVICIOS_ORDENES_SERVICIOS
-FOREIGN KEY (NroOrdenServ) REFERENCES ORDENES_SERVICIOS(Nro) ON UPDATE CASCADE ON DELETE NO ACTION;
-
-
-
--- Eliminar la clave foránea existente y la columna NumFacturaServ de ORDENES_SERVICIOS
-ALTER TABLE ORDENES_SERVICIOS DROP CONSTRAINT FK_ORDENES_SERVICIOS_FACTURAS_SERVICIOS; -- Asumiendo el nombre de la FK
-ALTER TABLE ORDENES_SERVICIOS DROP COLUMN NumFacturaServ;
-
--- Agregar una nueva columna en FACTURAS_SERVICIOS para establecer la relación
-ALTER TABLE FACTURAS_SERVICIOS ADD NroOrdenServ INT NOT NULL;
-
--- Establecer la nueva columna como clave foránea hacia ORDENES_SERVICIOS
-ALTER TABLE FACTURAS_SERVICIOS
-ADD CONSTRAINT FK_FACTURAS_SERVICIOS_ORDENES_SERVICIOS
-FOREIGN KEY (NroOrdenServ) REFERENCES ORDENES_SERVICIOS(Nro) ON UPDATE CASCADE ON DELETE NO ACTION;
 
 GO 
 
 CREATE VIEW inventario_view
 AS
 
-	SELECT p.CodProd, p.NombreP, i.Existencia
+	SELECT s.RIFSuc,p.CodProd, p.NombreP, i.Existencia
 	FROM PRODUCTOS p, INVENTARIOS i, SUCURSALES s
 	WHERE p.CodProd = i.CodProducto 
 	AND s.RIFSuc = i.RIFSuc
 
 GO
 
+
+
+
+/*
 --Vista aux para la primera consulta de estadísticas
-go
+
 CREATE VIEW V_ServiciosPorMarca AS
 SELECT 
-    OS.Nombre AS TipoServicio,
-    V.CodMarca,
+    S.Descripcion AS TipoServicio,
+    M.Nombre AS Marca,
     COUNT(*) AS Cantidad
 FROM 
-    ORDENES_SERVICIOS OS,
-    VEHICULOS V
-WHERE 
-    OS.CodVehiculo = V.CodVehiculo
+    ORDENES_SERVICIOS OS
+JOIN 
+    VEHICULOS V ON OS.CodVehiculo = V.CodVehiculo
+JOIN 
+    MODELOS_VEHICULOS MV ON V.CodMarca = MV.CodMarcaV
+JOIN 
+    MARCAS_VEHICULOS M ON MV.CodMarcaV = M.CodMarcaVeh
+JOIN 
+    CONTRATAN_ACT_ORDENS_PROD_SERV CA ON OS.Nro = CA.NroOrenServ
+JOIN 
+    ACTIVIDADES A ON CA.CodServicio = A.CodServicio AND CA.NroActividad = A.NroActividad
+JOIN 
+    SERVICIOS S ON A.CodServicio = S.CodigoServ
 GROUP BY 
-    OS.Nombre, V.CodMarca;
+    S.Descripcion, M.Nombre;
 
 -- Desde donde voy a buscar la primera consulta de Estadísticas
 
-CREATE VIEW V_Est_Marcas_Servicios AS
+	CREATE VIEW V_Est_Marcas_Servicios AS
 SELECT 
-    SPM.TipoServicio,
-    MV.Nombre AS Marca,
-    SPM.Cantidad
+    spm1.TipoServicio,
+    spm1.Marca,
+    spm1.Cantidad
 FROM 
-    V_ServiciosPorMarca SPM,
-    MARCAS_VEHICULOS MV
+    V_ServiciosPorMarca spm1
 WHERE 
-    SPM.CodMarca = MV.CodMarcaVeh
-    AND SPM.Cantidad = (
-        SELECT MAX(SPM2.Cantidad)
-        FROM V_ServiciosPorMarca SPM2
-        WHERE SPM2.TipoServicio = SPM.TipoServicio
+    spm1.Cantidad = (
+        SELECT MAX(spm2.Cantidad)
+        FROM V_ServiciosPorMarca spm2
+        WHERE spm2.TipoServicio = spm1.TipoServicio
     );
 
 
-
-
+*/
 /*
 
 -- ********************************* TRIGGERS *******************************
@@ -792,3 +781,47 @@ END;
 GO
 
 */
+
+GO
+--*********************PROCEDIMIENTOS
+CREATE PROCEDURE GenerarRequisicionesCompra
+    @RIFSuc VARCHAR(12)
+AS
+BEGIN
+    DECLARE @CodProd INT;
+    DECLARE @Minimo INT;
+    DECLARE @Existencia INT;
+    DECLARE @CantidadAOrdenar INT;
+    DECLARE @FechaActual DATE = GETDATE();
+
+    DECLARE productos_cursor CURSOR FOR
+        SELECT p.CodProd, p.Minimo, ISNULL(i.Existencia, 0) AS Existencia
+        FROM PRODUCTOS p
+        LEFT JOIN INVENTARIOS i ON p.CodProd = i.CodProducto AND i.RIFSuc = @RIFSuc;
+
+    OPEN productos_cursor;
+
+    FETCH NEXT FROM productos_cursor INTO @CodProd, @Minimo, @Existencia;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Calcular la cantidad a ordenar
+        SET @CantidadAOrdenar = @Minimo - @Existencia;
+        
+        IF @CantidadAOrdenar > 0
+        BEGIN
+            -- Calcular la cantidad para que la existencia quede en 25% del mínimo
+            SET @CantidadAOrdenar = CEILING(@Minimo * 1.25);
+
+            -- Insertar una nueva requisición de compra
+            INSERT INTO REQUISICIONES_COMPRA (RIFSuc, CodProd, CantProd, Fecha)
+            VALUES (@RIFSuc, @CodProd, @CantidadAOrdenar, @FechaActual);
+        END
+
+        FETCH NEXT FROM productos_cursor INTO @CodProd, @Minimo, @Existencia;
+    END
+
+    CLOSE productos_cursor;
+    DEALLOCATE productos_cursor;
+END;
+GO

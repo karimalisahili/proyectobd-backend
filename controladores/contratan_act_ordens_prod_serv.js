@@ -16,20 +16,20 @@ exports.getContratanActOrdensProdServ = (req, res) => {
 
 // POST operation
 exports.createContratanActOrdensProdServ = (req, res) => {
-  const { CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio, CantHoras } = req.body;
+  const { CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio} = req.body;
 
   const sqlInsert = `INSERT INTO CONTRATAN_ACT_ORDENS_PROD_SERV 
-                     (CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio, CantHoras) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                     (CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio) 
+                     VALUES (?, ?, ?, ?, ?, ?)`;
 
-  sql.query(connectionString, sqlInsert, [CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio, CantHoras], (err, result) => {
+  sql.query(connectionString, sqlInsert, [CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
-      res.status(500).json({ message: 'Error al insertar en la base de datos' });
+      res.status(500).json({ message: 'Error al insertar en la base de datos aqui' });
       return;
     }
     console.log('Registro de CONTRATAN_ACT_ORDENS_PROD_SERV creado con éxito', result);
-    res.status(201).json({ message: 'Registro de CONTRATAN_ACT_ORDENS_PROD_SERV creado con éxito' });
+    res.status(200).json({ message: 'Registro de CONTRATAN_ACT_ORDENS_PROD_SERV creado con éxito' });
   });
 };
 
@@ -52,13 +52,13 @@ exports.deleteContratanActOrdensProdServ = (req, res) => {
 
 // PUT operation
 exports.updateContratanActOrdensProdServ = (req, res) => {
-  const { CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio, CantHoras } = req.body;
+  const { CodServicio, NroActividad, NroOrenServ, CodProductoServ, CantProd, Precio} = req.body;
 
   const sqlUpdate = `UPDATE CONTRATAN_ACT_ORDENS_PROD_SERV SET 
-                     CantProd = ?, Precio = ?, CantHoras = ? 
+                     CantProd = ?, Precio = ?
                      WHERE CodServicio = ? AND NroActividad = ? AND NroOrenServ = ? AND CodProductoServ = ?`;
 
-  sql.query(connectionString, sqlUpdate, [CantProd, Precio, CantHoras, CodServicio, NroActividad, NroOrenServ, CodProductoServ], (err, result) => {
+  sql.query(connectionString, sqlUpdate, [CantProd, Precio, CodServicio, NroActividad, NroOrenServ, CodProductoServ], (err, result) => {
     if (err) {
       console.error('Error al actualizar el registro de CONTRATAN_ACT_ORDENS_PROD_SERV', err);
       res.status(500).json({ message: 'Error al actualizar el registro de CONTRATAN_ACT_ORDENS_PROD_SERV' });

@@ -935,7 +935,7 @@ END;
 
 GO
 
-/* PARA LA FACTURA DE SERVICIOS
+-- PARA LA FACTURA DE SERVICIOS
 
 --Procedimiento para calcular el descuento
 GO
@@ -1069,4 +1069,3 @@ BEGIN
 END;
 
 EXECUTE ObtenerDescuentoPorOrdenServicio @NroOrdenServicio = 1
-*/

@@ -163,6 +163,7 @@ router.delete('/ordenescompras', ordenes_compras.deleteOrdenCompra);
 router.get('/facturas_tiendas', facturas_tiendas.getFacturasTiendas);
 router.post('/facturas_tiendas', facturas_tiendas.createFacturaTienda);
 router.delete('/facturas_tiendas', facturas_tiendas.deleteFacturaTienda);
+router.get('/facturas_tiendas_descuento/:CIResponsable', facturas_tiendas.getDescuentosxResponsable);
 //*********************DESCUENTOS**************************
 router.get('/descuentos/:RIFSuc', descuentos.getDescuentos);
 router.post('/descuentos', descuentos.createDescuento);

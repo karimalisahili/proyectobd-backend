@@ -8,7 +8,7 @@ exports.getProductosTienda = (req, res) => {
     sql.query(connectionString, sqlSelect, (err, result) => {
         if (err) {
             console.error('Error al obtener los productos_tienda', err);
-            res.status(500).send('Error al obtener los productos_tienda');
+            res.status(500).json('Error al obtener los productos_tienda');
             return;
         }
         console.log('Productos_tienda obtenidos con éxito', result);
@@ -25,11 +25,11 @@ exports.createProductosTienda = (req, res) => {
     sql.query(connectionString, sqlInsert, [CodProd], (err, result) => {
         if (err) {
             console.error('Error al insertar en la base de datos', err);
-            res.status(500).send('Error al insertar en la base de datos');
+            res.status(500).json('Error al insertar en la base de datos');
             return;
         }
         console.log('Productos_tienda creado con éxito', result);
-        res.status(201).send('Productos_tienda creado con éxito');
+        res.status(201).json('Productos_tienda creado con éxito');
     });
 }
 
@@ -43,10 +43,10 @@ exports.deleteProductosTienda = (req, res) => {
     sql.query(connectionString, sqlDelete, [CodProd], (err, result) =>{
         if(err){
             console.error('Error al eliminar el Productos_tienda', err);
-            res.status(500).send('Error al eliminar el Productos_tienda');
+            res.status(500).json('Error al eliminar el Productos_tienda');
             return;
         }
         console.log('Productos_tienda eliminado con éxito', result);
-        res.status(200).send('Productos_tienda eliminado con éxito');
+        res.status(200).json('Productos_tienda eliminado con éxito');
     });
 }

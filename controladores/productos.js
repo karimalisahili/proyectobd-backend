@@ -8,8 +8,7 @@ exports.getProductos = (req, res) => {
     sql.query(connectionString, sqlSelect, (err, result) => {
         if (err) {
             console.error('Error al obtener los productos', err);
-            res.status(500).send('Error al obtener los productos');
-            return;
+            return res.status(500).json('Error al obtener los productos');
         }
         console.log('Productos obtenidos con éxito', result);
         res.status(200).json(result);
@@ -26,12 +25,12 @@ exports.createProducto = (req, res) => {
     sql.query(connectionString, sqlInsert, [CodProd, NombreP, Descripcion, Precio, Ecologico, Fabricante, Maximo, Minimo, TipoPro, CodLinea], (err, result) => {
         if (err) {
             console.error('Error al insertar en la base de datos', err);
-            res.status(500).json('Error al insertar en la base de datos');
-            return;
+            return res.status(500).json('Error al insertar en la base de datos');
         }
         console.log('Producto creado con éxito', result);
         res.status(200).json('Producto creado con éxito');
     });
+    
 };
 
 exports.deleteProducto = (req, res) => {
@@ -42,8 +41,7 @@ exports.deleteProducto = (req, res) => {
     sql.query(connectionString, sqlDelete, [CodProd], (err, result) => {
         if (err) {
             console.error('Error al eliminar el Producto', err);
-            res.status(500).json('Error al eliminar el Producto');
-            return;
+            return res.status(500).json('Error al eliminar el Producto');
         }
         console.log('Producto eliminado con éxito', result);
         res.status(200).json('Producto eliminado con éxito');
@@ -60,8 +58,7 @@ exports.updateProducto = (req, res) => {
     sql.query(connectionString, sqlUpdate, [NombreP, Descripcion, Precio, Ecologico, Fabricante, Maximo, Minimo, TipoPro, CodLinea, CodProd], (err, result) => {
         if (err) {
             console.error('Error al actualizar el Producto', err);
-            res.status(500).json('Error al actualizar el Producto');
-            return;
+            return res.status(500).json('Error al actualizar el Producto');
         }
         console.log('Producto actualizado con éxito', result);
         res.status(200).json('Producto actualizado con éxito');

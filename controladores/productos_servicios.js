@@ -8,7 +8,7 @@ exports.getProductosServicios = (req, res) => {
     sql.query(connectionString, sqlSelect, (err, result) => {
         if (err) {
             console.error('Error al obtener los productos_servicios', err);
-            res.status(500).send('Error al obtener los productos_servicios');
+            res.status(500).json('Error al obtener los productos_servicios');
             return;
         }
         console.log('Productos_servicios obtenidos con éxito', result);
@@ -25,11 +25,11 @@ exports.createProductosServicio = (req, res) => {
     sql.query(connectionString, sqlInsert, [CodProd], (err, result) => {
         if (err) {
             console.error('Error al insertar en la base de datos', err);
-            res.status(500).send('Error al insertar en la base de datos');
+            res.status(500).json('Error al insertar en la base de datos');
             return;
         }
         console.log('Producto_servicio creado con éxito', result);
-        res.status(201).send('Producto_servicio creado con éxito');
+        res.status(200).json('Producto_servicio creado con éxito');
     });
 }
 
@@ -43,10 +43,10 @@ exports.deleteProductosServicio = (req, res) => {
     sql.query(connectionString, sqlDelete, [CodProd], (err, result) =>{
         if(err){
             console.error('Error al eliminar el Producto_servicio', err);
-            res.status(500).send('Error al eliminar el Producto_servicio');
+            res.status(500).json('Error al eliminar el Producto_servicio');
             return;
         }
         console.log('Producto_servicio eliminado con éxito', result);
-        res.status(200).send('Producto_servicio eliminado con éxito');
+        res.status(200).json('Producto_servicio eliminado con éxito');
     });
 }

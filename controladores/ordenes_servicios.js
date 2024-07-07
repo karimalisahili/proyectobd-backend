@@ -12,7 +12,7 @@ exports.getOrdenesServicios = (req, res) => {
     console.log('Órdenes de servicios obtenidas con éxito', result);
     res.status(200).json(result);
   });
-};
+}; 
 
 // POST operation
 exports.createOrdenServicio = (req, res) => {

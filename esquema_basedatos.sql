@@ -35,7 +35,6 @@ CREATE TABLE RESPONSABLES (
 );
 
 
-
 -- Tabla MARCAS_VEHICULOS
 CREATE TABLE MARCAS_VEHICULOS (
     CodMarcaVeh INT NOT NULL PRIMARY KEY IDENTITY(1,1),
@@ -383,40 +382,76 @@ GO
 
 /*
 --Vista aux para la primera consulta de estadísticas
-go
+
 CREATE VIEW V_ServiciosPorMarca AS
 SELECT 
-    OS.Nombre AS TipoServicio,
-    V.CodMarca,
+    S.Descripcion AS TipoServicio,
+    M.Nombre AS Marca,
     COUNT(*) AS Cantidad
 FROM 
-    ORDENES_SERVICIOS OS,
-    VEHICULOS V
-WHERE 
-    OS.CodVehiculo = V.CodVehiculo
+    ORDENES_SERVICIOS OS
+JOIN 
+    VEHICULOS V ON OS.CodVehiculo = V.CodVehiculo
+JOIN 
+    MODELOS_VEHICULOS MV ON V.CodMarca = MV.CodMarcaV
+JOIN 
+    MARCAS_VEHICULOS M ON MV.CodMarcaV = M.CodMarcaVeh
+JOIN 
+    CONTRATAN_ACT_ORDENS_PROD_SERV CA ON OS.Nro = CA.NroOrenServ
+JOIN 
+    ACTIVIDADES A ON CA.CodServicio = A.CodServicio AND CA.NroActividad = A.NroActividad
+JOIN 
+    SERVICIOS S ON A.CodServicio = S.CodigoServ
 GROUP BY 
-    OS.Nombre, V.CodMarca;
+    S.Descripcion, M.Nombre;
 
 -- Desde donde voy a buscar la primera consulta de Estadísticas
 
-CREATE VIEW V_Est_Marcas_Servicios AS
+	CREATE VIEW V_Est_Marcas_Servicios AS
 SELECT 
-    SPM.TipoServicio,
-    MV.Nombre AS Marca,
-    SPM.Cantidad
+    spm1.TipoServicio,
+    spm1.Marca,
+    spm1.Cantidad
 FROM 
-    V_ServiciosPorMarca SPM,
-    MARCAS_VEHICULOS MV
+    V_ServiciosPorMarca spm1
 WHERE 
-    SPM.CodMarca = MV.CodMarcaVeh
-    AND SPM.Cantidad = (
-        SELECT MAX(SPM2.Cantidad)
-        FROM V_ServiciosPorMarca SPM2
-        WHERE SPM2.TipoServicio = SPM.TipoServicio
+    spm1.Cantidad = (
+        SELECT MAX(spm2.Cantidad)
+        FROM V_ServiciosPorMarca spm2
+        WHERE spm2.TipoServicio = spm1.TipoServicio
     );
 
 
+<<<<<<< HEAD
 */
+=======
+/*TRIGGER para Productos*/
+
+CREATE TRIGGER tipo_producto_trigger
+ON PRODUCTOS
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @TipoPro VARCHAR(10);
+    DECLARE @CodProd INT;
+
+    SELECT @TipoPro = TipoPro, @CodProd = CodProd
+    FROM INSERTED;
+
+    IF @TipoPro = 'Servicio'
+    BEGIN
+        INSERT INTO PRODUCTOS_SERVICIOS (CodProd)
+        VALUES (@CodProd);
+    END
+    ELSE
+    BEGIN
+        INSERT INTO PRODUCTOS_TIENDA (CodProd)
+        VALUES (@CodProd);
+    END
+END;
+
+drop TRIGGER tipo_producto_trigger
+>>>>>>> bb4acf54ab07e99ef61dcf6d7c8050dc10ac2f2f
 /*
 
 -- ********************************* TRIGGERS *******************************

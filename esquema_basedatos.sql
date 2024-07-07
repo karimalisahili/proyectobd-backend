@@ -422,7 +422,63 @@ WHERE
     );
 
 
-*/
+-- Vista Auxiliat para la consulta de estadísticas 2
+
+CREATE VIEW V_ServiciosPorEmpleadoMes AS
+SELECT 
+    T.Cedula AS CIEmpleado,
+    T.Nombre AS NombreEmpleado,
+    YEAR(OS.FechaHoraE) AS Año,
+    MONTH(OS.FechaHoraE) AS Mes,
+    COUNT(*) AS Cantidad
+FROM 
+    ORDENES_SERVICIOS OS
+JOIN 
+    TRABAJADORES T ON OS.CIEmpleado = T.Cedula
+GROUP BY 
+    T.Cedula,
+    T.Nombre,
+    YEAR(OS.FechaHoraE),
+    MONTH(OS.FechaHoraE);
+
+
+---Consulta 2 Personal que realiza más servicios por mes.
+
+	CREATE VIEW V_PersonalMasServiciosPorMes AS
+SELECT 
+    Año as Anio,
+    Mes,
+    CIEmpleado,
+    NombreEmpleado,
+    Cantidad
+FROM 
+    V_ServiciosPorEmpleadoMes spem1
+WHERE 
+    Cantidad = (
+        SELECT MAX(spem2.Cantidad)
+        FROM V_ServiciosPorEmpleadoMes spem2
+        WHERE spem2.Año = spem1.Año AND spem2.Mes = spem1.Mes
+    );
+
+---Consulta 2 Personal que realiza menos servicios por mes.
+
+	CREATE VIEW V_PersonalMenosServiciosPorMes AS
+SELECT 
+    Año as Anio,
+    Mes,
+    CIEmpleado,
+    NombreEmpleado,
+    Cantidad
+FROM 
+    V_ServiciosPorEmpleadoMes spem1
+WHERE 
+    Cantidad = (
+        SELECT MIN(spem2.Cantidad)
+        FROM V_ServiciosPorEmpleadoMes spem2
+        WHERE spem2.Año = spem1.Año AND spem2.Mes = spem1.Mes
+    );
+
+
 /*
 
 -- ********************************* TRIGGERS *******************************

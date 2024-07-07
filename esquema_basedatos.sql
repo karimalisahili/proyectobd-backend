@@ -255,7 +255,7 @@ CREATE TABLE FACTURAS_TIENDAS (
 CREATE TABLE DESCUENTOS (
     RIFSuc VARCHAR(12) NOT NULL,
     NroDesc INT NOT NULL IDENTITY(1,1),
-    LimiteInfe INT NOT NULL CHECK (LimiteInfe > 0),
+    LimiteInfe INT NOT NULL,
     LimiteSup INT NOT NULL,
     PorcentajeDesc DECIMAL(4,4) NOT NULL CHECK (PorcentajeDesc > 0),
     UNIQUE(LimiteInfe,LimiteSup),

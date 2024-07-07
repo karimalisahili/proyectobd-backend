@@ -18,7 +18,7 @@ exports.getTrabajadores = (req, res) => {
     console.log('trabajadores obtenidas con éxito', result);
     res.status(200).json(result);
   });
-};
+}; 
 
 exports.createTrabajadores = (req, res) => {
     // Preparar la sentencia SQL para crear un nuevo trabajador

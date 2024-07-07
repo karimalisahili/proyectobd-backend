@@ -14,15 +14,32 @@ exports.getFacturasTiendas = (req, res) => {
   });
 };
 
+exports.getDescuentosxResponsable = (req, res) => {
+  const { CIResponsable } = req.params;
+
+  const sqlCall = `EXEC ObtenerDescuentoParaResponsable @CIResponsable = ?`;
+
+  sql.query(connectionString, sqlCall, [CIResponsable], (err, result) => {
+    if (err) {
+      console.error('Error al obtener el descuento para el responsable', err);
+      res.status(500).json({ message: 'Error al obtener el descuento para el responsable' });
+      return;
+    }
+    console.log('Descuento obtenido con éxito', result);
+    // Asumiendo que el resultado es un único valor de descuento
+    res.status(200).json(result[0]);
+  });
+};
+
 // POST operation
 exports.createFacturaTienda = (req, res) => {
-  const { Fecha, Monto, Descuento, CodPago } = req.body;
+  const { Fecha, Monto, Descuento, CodPago, CIResponsable} = req.body;
 
   const sqlInsert = `INSERT INTO FACTURAS_TIENDAS 
-                     (Fecha, Monto, Descuento, CodPago) 
-                     VALUES (?, ?, ?, ?)`;
+                     (Fecha, Monto, Descuento, CodPago, CIResponsable) 
+                     VALUES (?, ?, ?, ?, ?)`;
 
-  sql.query(connectionString, sqlInsert, [Fecha, Monto, Descuento, CodPago], (err, result) => {
+  sql.query(connectionString, sqlInsert, [Fecha, Monto, Descuento, CodPago, CIResponsable], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
       res.status(500).json({ message: 'Error al insertar en la base de datos' });

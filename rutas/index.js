@@ -216,6 +216,7 @@ router.get('/inventario_view/:RIFSuc', inventario_view.getInventarios);
 
 //********************ESTADISTICAS***************************
 router.get('/estadisticas_marcas_servicio', estadisticas.getMarcasServicios);
-
+router.get('/estadisticas_empleados_mas_servicios/:Anio/:Mes', estadisticas.getEmpleadosMasServicios);
+router.get('/estadisticas_empleados_menos_servicios/:Anio/:Mes', estadisticas.getEmpleadosMenosServicios);
 
 module.exports = router;

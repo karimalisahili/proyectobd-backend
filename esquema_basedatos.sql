@@ -120,14 +120,12 @@ CREATE TABLE ORDENES_SERVICIOS (
 -- Tabla FACTURAS_SERVICIOS
 CREATE TABLE FACTURAS_SERVICIOS (
     CodF INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-	CodOrd INT NOT NULL,
+	CodOrd INT NOT NULL UNIQUE,
 	FOREIGN KEY (CodOrd) REFERENCES ORDENES_SERVICIOS(Nro) ON UPDATE CASCADE ON DELETE NO ACTION,
     Fecha DATE NOT NULL,
     Monto DECIMAL(10, 2) NOT NULL CHECK (Monto > 0),
     Descuento DECIMAL(10,2) NOT NULL
 );
-
-
 
 -- Tabla SERVICIOS
 CREATE TABLE SERVICIOS (
@@ -234,8 +232,6 @@ CREATE TABLE FACTURAS_PROVEEDORES (
     CodProd INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
     FOREIGN KEY (RIFSuc,CodOrden, CodRequiCom, CodProd) REFERENCES ORDENES_COMPRAS(RIFSuc,CodOrden, CodRequiCom, CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
-
-USE tallerdb;
 
 -- Tabla FACTURAS_TIENDAS
 CREATE TABLE FACTURAS_TIENDAS (
@@ -349,6 +345,7 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
     FOREIGN KEY (NroOrenServ) REFERENCES ORDENES_SERVICIOS(Nro) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (CodProductoServ) REFERENCES PRODUCTOS_SERVICIOS(CodProd) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+
 
 
 -- Tabla INVENTARIOS
@@ -478,369 +475,60 @@ WHERE
     );
 
 
-/*
-
--- ********************************* TRIGGERS *******************************
-
---***************************Karim *********************************
---**** Trigger para validar la inserción en la tabla TELEFONOS_DUENOS ****
-GO
-CREATE TRIGGER trg_MaxDosTelefonos_Ins
-ON TELEFONOS_DUENOS
-AFTER INSERT
-AS
-BEGIN
-    -- Contar la cantidad de teléfonos existentes para cada vehículo afectado por la inserción
-    IF EXISTS (
-        SELECT CodVehiculo
-        FROM TELEFONOS_DUENOS
-        WHERE CodVehiculo IN (SELECT CodVehiculo FROM inserted)
-        GROUP BY CodVehiculo
-        HAVING COUNT(NroTelefono) > 2
-    )
-    BEGIN
-        -- Si ya hay 2 teléfonos, no permitir la inserción
-        RAISERROR ('No se puede insertar más de dos teléfonos para un vehículo.', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-END;
-GO
-
---**** Trigger para validar la actualización en la tabla TELEFONOS_DUENOS ****
-GO
-CREATE TRIGGER trg_MaxDosTelefonos_Upd
-ON TELEFONOS_DUENOS
-AFTER UPDATE
-AS
-BEGIN
-    -- Contar la cantidad de teléfonos existentes para cada vehículo afectado por la actualización
-    IF EXISTS (
-        SELECT CodVehiculo
-        FROM TELEFONOS_DUENOS
-        WHERE CodVehiculo IN (SELECT CodVehiculo FROM inserted)
-        GROUP BY CodVehiculo
-        HAVING COUNT(NroTelefono) > 2
-    )
-    BEGIN
-        -- Si ya hay 2 teléfonos, no permitir la actualización
-        RAISERROR ('No se puede actualizar a más de dos teléfonos para un vehículo.', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-END;
-GO
-
-
-
---**** Trigger para validar el cumplimiento de la jerarquia exclusiva en la tabla PAGOS al insertar ****
-GO
-CREATE TRIGGER trg_JerarquiaExclusiva_Ins
-ON PAGOS
-AFTER INSERT
-AS
-BEGIN
-    -- Validar según TipoPago
-    IF EXISTS (
-        SELECT 1
-        FROM inserted
-        WHERE (TipoPago = 'E' AND (TipoEfectivo IS NULL OR Referencia IS NOT NULL OR NroTelf IS NOT NULL OR TipoTarjeta IS NOT NULL OR Banco IS NOT NULL OR NumTarjeta IS NOT NULL))
-        OR (TipoPago = 'P' AND (Referencia IS NULL OR NroTelf IS NULL))
-        OR (TipoPago = 'T' AND (TipoTarjeta IS NULL OR Banco IS NULL OR NumTarjeta IS NULL))
-    )
-    BEGIN
-        RAISERROR ('Validación fallida para la tabla PAGOS.', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-END;
-GO
-
---**** Trigger para validar el cumplimiento de la jerarquia exclusiva en la tabla PAGOS al actualizar ****
-GO
-CREATE TRIGGER trg_JerarquiaExclusiva_Upd
-ON PAGOS
-AFTER UPDATE
-AS
-BEGIN
-    -- Validar según TipoPago
-    IF EXISTS (
-        SELECT 1
-        FROM inserted
-        WHERE (TipoPago = 'E' AND (TipoEfectivo IS NULL OR Referencia IS NOT NULL OR NroTelf IS NOT NULL OR TipoTarjeta IS NOT NULL OR Banco IS NOT NULL OR NumTarjeta IS NOT NULL))
-        OR (TipoPago = 'P' AND (Referencia IS NULL OR NroTelf IS NULL))
-        OR (TipoPago = 'T' AND (TipoTarjeta IS NULL OR Banco IS NULL OR NumTarjeta IS NULL))
-    )
-    BEGIN
-        RAISERROR ('Validación fallida para la tabla PAGOS.', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-END;
-GO
-
--- **** La cantidad teorica disminuye cuando hacemos un consumo/venta ****
--- Trigger para disminuir la existencia de productos después de insertar en FACTURAS_SERVICIOS
-GO
-CREATE TRIGGER trg_UpdateProductExistence_AfterInsert_FACTURAS_SERVICIOS
-ON FACTURAS_SERVICIOS
-AFTER INSERT
-AS
-BEGIN
-    -- Actualizar la existencia de productos
-    UPDATE p
-    SET p.Existencia = p.Existencia - ca.CantProd
-    FROM PRODUCTOS p
-    JOIN PRODUCTOS_SERVICIOS ps ON p.CodProd = ps.CodProd
-    JOIN CONTRATAN_ACT_ORDENS_PROD_SERV ca ON ps.CodProd = ca.CodProductoServ
-    JOIN ORDENES_SERVICIOS os ON ca.NroOrenServ = os.Nro
-    JOIN inserted i ON os.NumFacturaServ = i.CodF
-    WHERE p.Existencia - ca.CantProd >= 0 -- Asegurarse de que la existencia no sea negativa
-END;
-GO
-
-
-
--- Trigger para disminuir la existencia de productos después de insertar en FACTURAS_TIENDAS
-GO
-CREATE TRIGGER trg_UpdateProductExistence_AfterInsert_FACTURAS_TIENDAS
-ON FACTURAS_TIENDAS
-AFTER INSERT
-AS
-BEGIN
-    -- Actualizar la existencia de productos
-    UPDATE p
-    SET p.Existencia = p.Existencia - rf.CantComprada
-    FROM PRODUCTOS p
-    JOIN PRODUCTOS_TIENDA pt ON p.CodProd = pt.CodProd
-    JOIN REGISTRAN_FACT_PROD rf ON pt.CodProd = rf.CodProdTienda
-    JOIN inserted i ON rf.NumFactTienda = i.CodF
-    WHERE p.Existencia - rf.CantComprada >= 0 -- Asegurarse de que la existencia no sea negativa
-END;
-GO
-
-
--- **** Jerarquia exclusiva de las tablas Productos ****
--- Trigger para asegurar la jerarquía exclusiva en PRODUCTOS_SERVICIOS
-GO
-CREATE TRIGGER trg_VerifyExclusiveHierarchy_AfterInsert_PRODUCTOS_SERVICIOS
-ON PRODUCTOS_SERVICIOS
-AFTER INSERT
-AS
-BEGIN
-    IF EXISTS (SELECT 1 FROM PRODUCTOS_TIENDA WHERE CodProd IN (SELECT CodProd FROM inserted))
-    BEGIN
-        RAISERROR ('El producto ya existe en PRODUCTOS_TIENDA. La jerarquía exclusiva no se cumple.', 16, 1)
-        ROLLBACK TRANSACTION
-    END
-END;
-GO
-
--- Trigger para asegurar la jerarquía exclusiva en PRODUCTOS_TIENDA
-GO
-CREATE TRIGGER trg_VerifyExclusiveHierarchy_AfterInsert_PRODUCTOS_TIENDA
-ON PRODUCTOS_TIENDA
-AFTER INSERT
-AS
-BEGIN
-    IF EXISTS (SELECT 1 FROM PRODUCTOS_SERVICIOS WHERE CodProd IN (SELECT CodProd FROM inserted))
-    BEGIN
-        RAISERROR ('El producto ya existe en PRODUCTOS_SERVICIOS. La jerarquía exclusiva no se cumple.', 16, 1)
-        ROLLBACK TRANSACTION
-    END
-END;
-GO
-
-
-
-
-
---***************************SEBASTIAN *********************************
---Trigger para generar una requisicion de compra al final del dia 
-GO
-CREATE TRIGGER generar_requisicion_compra
-ON PRODUCTOS
-AFTER UPDATE
-AS
-BEGIN
-    DECLARE @currentDate DATE = CONVERT(DATE, GETDATE());
-    DECLARE @CodProd INT;
-    DECLARE @Existencia INT;
-    DECLARE @Minimo INT;
-    DECLARE @CantProd INT;
-
-    -- Cursor para recorrer los productos actualizados
-    DECLARE product_cursor CURSOR FOR
-    SELECT CodProd, Existencia, Minimo
-    FROM INSERTED
-    WHERE Existencia <= Minimo;
-
-    OPEN product_cursor;
-
-    FETCH NEXT FROM product_cursor INTO @CodProd, @Existencia, @Minimo;
-
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        -- Calcular la cantidad necesaria para alcanzar el nivel deseado (25% por encima del mínimo)
-        SET @CantProd = CEILING((@Minimo * 1.25) - @Existencia);
-
-        -- Insertar una nueva requisición de compra
-        IF @CantProd > 0
-        BEGIN
-            INSERT INTO REQUISICIONES_COMPRA (Fecha, CantProd, CodProd)
-            VALUES (@currentDate, @CantProd, @CodProd);
-        END
-
-        FETCH NEXT FROM product_cursor INTO @CodProd, @Existencia, @Minimo;
-    END;
-
-    CLOSE product_cursor;
-    DEALLOCATE product_cursor;
-END;
-GO
---Trigger para verificar la disponibilidad y calcular el abono de una reserva
-GO
-CREATE TRIGGER trg_VerificarDisponibilidadYCalcularAbono
-ON RESERVAS
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @NroR INT;
-    DECLARE @CodVehiculo INT;
-    DECLARE @Abono DECIMAL(10, 2);
-    DECLARE @CodServicio INT;
-    DECLARE @NroActividad INT;
-    DECLARE @Monto DECIMAL(10, 2);
-    DECLARE @AntelacionReserva INT;
-
-    -- Obtener la información de la reserva recién insertada
-    SELECT @NroR = INSERTED.NroR, @CodVehiculo = INSERTED.CodVehiculo, @Abono = INSERTED.Abono
-    FROM INSERTED;
-
-    -- Comprobar la disponibilidad del servicio
-    SELECT TOP 1 @CodServicio = CodServicio, @NroActividad = NroActividad, @Monto = Monto, @AntelacionReserva = AntelacionReserva
-    FROM ACTIVIDADES
-    WHERE CodServicio = @CodVehiculo;
-
-    -- Verificar si la reserva cumple con la antelación mínima requerida
-    IF DATEDIFF(DAY, GETDATE(), @AntelacionReserva) >= @AntelacionReserva
-    BEGIN
-        -- Calcular el abono mínimo y máximo permitido
-        DECLARE @AbonoMinimo DECIMAL(10, 2);
-        DECLARE @AbonoMaximo DECIMAL(10, 2);
-
-        SET @AbonoMinimo = @Monto * 0.20;
-        SET @AbonoMaximo = @Monto * 0.50;
-
-        -- Verificar si el abono está dentro del rango permitido
-        IF @Abono < @AbonoMinimo OR @Abono > @AbonoMaximo
-        BEGIN
-            RAISERROR('El abono debe estar entre el 20%% y el 50%% del monto del servicio.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
-
-        -- Insertar la relación entre la reserva y la actividad
-        INSERT INTO APARTAN_RES_ACT (NroReserva, CodServicio, NroActividad, FechaEjecucion)
-        VALUES (@NroR, @CodServicio, @NroActividad, DATEADD(DAY, @AntelacionReserva, GETDATE()));
-    END
-    ELSE
-    BEGIN
-        RAISERROR('No hay disponibilidad para la reserva con la antelación requerida.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
-END;
-GO
---Trigger para aumerntar la existencia de un producto en la tabla PRODUCTOS
-GO
-CREATE TRIGGER trg_AumentarExistencia
-ON ORDENES_COMPRAS
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @CodProd INT;
-    DECLARE @CantidadProd INT;
-
-    -- Obtener la información de la orden de compra recién insertada
-    SELECT @CodProd = CodRequiCom, @CantidadProd = CantidadProd
-    FROM INSERTED;
-
-    -- Actualizar la existencia del producto en la tabla PRODUCTOS
-    UPDATE PRODUCTOS
-    SET Existencia = Existencia + @CantidadProd
-    WHERE CodProd = @CodProd;
-END;
-
--- Trigger para verificar la anticipación de una reserva
-GO
-CREATE TRIGGER trg_VerificarAnticipacionReserva
-ON RESERVAS
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @NroR INT;
-    DECLARE @FechaR DATE;
-    DECLARE @CodVehiculo INT;
-    DECLARE @AntelacionReserva INT;
-    DECLARE @CodServicio INT;
-
-    -- Obtener la información de la reserva recién insertada
-    SELECT @NroR = INSERTED.NroR, @FechaR = INSERTED.FechaR, @CodVehiculo = INSERTED.CodVehiculo
-    FROM INSERTED;
-
-    -- Obtener la información del servicio que requiere reserva
-    SELECT @CodServicio = CodServicio, @AntelacionReserva = AntelacionReserva
-    FROM ACTIVIDADES
-    WHERE CodServicio = @CodVehiculo; -- Supongamos que CodVehiculo se refiere a un servicio en ACTIVIDADES
-
-    -- Verificar la anticipación mínima requerida
-    IF DATEDIFF(DAY, GETDATE(), @FechaR) < @AntelacionReserva
-    BEGIN
-        RAISERROR('La reserva debe realizarse con una anticipación mínima de %d días para garantizar el cupo.', 16, 1, @AntelacionReserva);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
-END;
-GO
-
-
-GO
-CREATE TRIGGER trg_AjustarCantidadOrden
-ON ORDENES_COMPRAS
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @CodProd INT;
-    DECLARE @CantidadProd INT;
-    DECLARE @Minimo INT;
-    DECLARE @Existencia INT;
-    DECLARE @CantidadNecesaria INT;
-
-    -- Obtener la información de la orden de compra recién insertada
-    SELECT @CodProd = CodRequiCom, @CantidadProd = CantidadProd
-    FROM INSERTED;
-
-    -- Obtener la información del producto
-    SELECT @Minimo = Minimo, @Existencia = Existencia
-    FROM PRODUCTOS
-    WHERE CodProd = @CodProd;
-
-    -- Calcular la cantidad necesaria para que el inventario quede un 25% por encima del nivel mínimo
-    SET @CantidadNecesaria = (@Minimo * 1.25) - @Existencia;
-
-    -- Verificar si la cantidad actual es suficiente
-    IF @CantidadProd < @CantidadNecesaria
-    BEGIN
-        -- Actualizar la cantidad pedida en la orden de compra
-        UPDATE ORDENES_COMPRAS
-        SET CantidadProd = @CantidadNecesaria
-        WHERE CodOrden = (SELECT CodOrden FROM INSERTED);
-    END
-END;
-GO
-
 */
 
 
+-- ********************************* TRIGGERS *******************************
+
 GO
+
+CREATE TRIGGER tr_AfterInsert_Factura_Proveedor
+ON FACTURAS_PROVEEDORES
+AFTER INSERT
+AS
+BEGIN
+    -- Declare variables to hold the inserted values
+    DECLARE @RIFSuc VARCHAR(12);
+    DECLARE @CodProd INT;
+    DECLARE @CodRequiCom INT;
+    DECLARE @CantProd INT;
+
+    -- Retrieve the inserted values
+    SELECT @RIFSuc = i.RIFSuc, @CodProd = i.CodProd, @CodRequiCom = i.CodRequiCom
+    FROM INSERTED i;
+
+    -- Retrieve the quantity from the requisitions table
+    SELECT @CantProd = rc.CantProd
+    FROM REQUISICIONES_COMPRA rc
+    WHERE rc.IdReq = @CodRequiCom AND rc.CodProd = @CodProd AND rc.RIFSuc = @RIFSuc;
+
+    -- Check if the product already exists in the inventory
+    IF EXISTS (SELECT 1 FROM INVENTARIOS WHERE RIFSuc = @RIFSuc AND CodProducto = @CodProd)
+    BEGIN
+        -- Update the existing inventory record
+        UPDATE INVENTARIOS
+        SET Existencia = Existencia + @CantProd
+        WHERE RIFSuc = @RIFSuc AND CodProducto = @CodProd;
+    END
+    ELSE
+    BEGIN
+        -- Insert a new inventory record
+        INSERT INTO INVENTARIOS (RIFSuc, CodProducto, Existencia)
+        VALUES (@RIFSuc, @CodProd, @CantProd);
+    END
+END;
+
+GO
+
+
+
+
+
+
 --*********************PROCEDIMIENTOS
+
+--GENERA REQUISICIONES DE COMPRAS PARA UNA SUCURSAL DADA
+GO
 CREATE PROCEDURE GenerarRequisicionesCompra
     @RIFSuc VARCHAR(12)
 AS
@@ -883,6 +571,10 @@ BEGIN
 END;
 GO
 
+
+
+-- INSERTA EL MONTO CORRECTO EN CONTRATACIONES PARA UNA ORDEN SERVICIO
+-- MONTO = MONTOACTIVIDAD + CANT PRODUCTO * PRECIO PRODUCTO
 
 GO
 
@@ -935,6 +627,7 @@ END;
 
 GO
 
+--Procedimiento para calcular el descuento PARA UNA  CI RESPONSABLE DADA
 -- PARA LA FACTURA DE SERVICIOS
 
 --Procedimiento para calcular el descuento
@@ -962,11 +655,11 @@ BEGIN
     SELECT @Descuento AS Descuento;
 END
 
-EXECUTE ObtenerDescuentoParaResponsable @CIResponsable = 30212401
+--EXECUTE ObtenerDescuentoParaResponsable @CIResponsable = 30212401
 
-SELECT * FROM VEHICULOS
 
---PARA FACTURA....
+
+--OBTENER NRO ORDEN SERVICIO RESPONSABLE CEDULA PARA UNA ORDEN DE SERVICIO DADA
 
 GO
 CREATE PROCEDURE ObtenerDatosOrdenServicio
@@ -984,9 +677,9 @@ BEGIN
     WHERE os.Nro = @NroOrdenServicio;
 END;
 
-EXECUTE ObtenerDatosOrdenServicio @NroOrdenServicio = 1
+--EXECUTE ObtenerDatosOrdenServicio @NroOrdenServicio = 1
 
---OBTENER SERVICIOS
+--OBTENER SERVICIOS PARA UNA ORDEN DE SERVICIO DADA
 GO 
 CREATE PROCEDURE ObtenerServiciosOrdenServicio
     @NroOrdenServicio INT
@@ -1000,9 +693,9 @@ BEGIN
     WHERE caos.NroOrenServ = @NroOrdenServicio;
 END;
 
-EXECUTE ObtenerServiciosOrdenServicio @NroOrdenServicio = 1
+--EXECUTE ObtenerServiciosOrdenServicio @NroOrdenServicio = 1
 
---OBTENER ACTIVIDADES
+--OBTENER ACTIVIDADES PARA UNA ORDEN DE SERVICIO DADA
 GO
 CREATE PROCEDURE ObtenerActividadesOrdenServicio
     @NroOrdenServicio INT
@@ -1018,9 +711,9 @@ BEGIN
     WHERE caos.NroOrenServ = @NroOrdenServicio;
 END;
 
-EXECUTE ObtenerActividadesOrdenServicio @NroOrdenServicio = 1
+--EXECUTE ObtenerActividadesOrdenServicio @NroOrdenServicio = 1
 
---OBTENER PRODUCTOS
+--OBTENER PRODUCTOS  CON UNA ORDEN SERVICIO DADA
 GO
 CREATE PROCEDURE ObtenerProductosOrdenServicio
     @NroOrdenServicio INT
@@ -1033,9 +726,9 @@ BEGIN
     WHERE caos.NroOrenServ = @NroOrdenServicio;
 END;
 
-EXECUTE ObtenerProductosOrdenServicio @NroOrdenServicio = 1
+--EXECUTE ObtenerProductosOrdenServicio @NroOrdenServicio = 1
 
---OBTENER DESCUENTO
+--OBTENER DESCUENTO CON UNA ORDEN SERVICIO DADA
 GO
 CREATE PROCEDURE ObtenerDescuentoPorOrdenServicio
     @NroOrdenServicio INT
@@ -1068,4 +761,19 @@ BEGIN
     SELECT @Descuento AS Descuento;
 END;
 
+
 EXECUTE ObtenerDescuentoPorOrdenServicio @NroOrdenServicio = 1
+
+/*SEGURIDAD MULTINIVEL*/
+/*
+
+CREATE ROLE ENCARGADO 
+
+GRANT SELECT, UPDATE, DELETE, INSERT to ENCARGADO
+
+CREATE ROLE TRABAJADOR
+
+GRANT SELECT TO TRABAJADOR
+
+*/
+

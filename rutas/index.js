@@ -107,6 +107,10 @@ router.get('/facturas_servicios', facturas_servicios.getFacturasServicios);
 router.post('/facturas_servicios', facturas_servicios.createFacturaServicio);
 router.delete('/facturas_servicios', facturas_servicios.deleteFacturaServicio);
 router.get('/datosOrdenServicio/:nroOrden', facturas_servicios.getDatosOrdenServicio);
+router.get('/datosServicios/:nroOrden', facturas_servicios.getDatosServicios);
+router.get('/datosActividades/:nroOrden', facturas_servicios.getDatosActividades);
+router.get('/datosProductos/:nroOrden', facturas_servicios.getDatosProductos);
+router.get('/datosDescuento/:nroOrden', facturas_servicios.getDatosDescuento);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);

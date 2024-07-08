@@ -2,8 +2,13 @@ const { sql, connectionString } = require('../config'); // Asegúrate de que la 
 
 // GET operation
 exports.getOrdenesCompras = (req, res) => {
-  const sqlSelect = 'SELECT * FROM ORDENES_COMPRAS';
-  sql.query(connectionString, sqlSelect, (err, result) => {
+  const RIFSuc = req.params.RIFSuc;
+
+  // Asegúrate de escapar correctamente el valor de RIFSuc para prevenir inyecciones SQL
+  const sqlSelect = 'SELECT * FROM ORDENES_COMPRAS WHERE RIFSuc = ?';
+
+  // Pasar RIFSuc como un arreglo para prevenir inyecciones SQL
+  sql.query(connectionString, sqlSelect, [RIFSuc], (err, result) => {
     if (err) {
       console.error('Error al obtener las órdenes de compras', err);
       res.status(500).json({ message: 'Error al obtener las órdenes de compras' });
@@ -16,30 +21,31 @@ exports.getOrdenesCompras = (req, res) => {
 
 // POST operation
 exports.createOrdenCompra = (req, res) => {
-  const { NumFactProv, RIFProv, CodRequiCom, Precio, CantidadProd, RIFSuc } = req.body;
+  const { RIFProv, CodRequiCom, CodProd, Precio, RIFSuc } = req.body;
 
   const sqlInsert = `INSERT INTO ORDENES_COMPRAS 
-                     (NumFactProv, RIFProv, CodRequiCom, Precio, CantidadProd, RIFSuc) 
-                     VALUES (?, ?, ?, ?, ?, ?)`;
+                     (RIFProv, CodRequiCom, CodProd, Precio, RIFSuc) 
+                     VALUES (?, ?, ?, ?, ?)`;
 
-  sql.query(connectionString, sqlInsert, [NumFactProv, RIFProv, CodRequiCom, Precio, CantidadProd, RIFSuc], (err, result) => {
+  sql.query(connectionString, sqlInsert, [RIFProv, CodRequiCom, CodProd, Precio, RIFSuc], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
       res.status(500).json({ message: 'Error al insertar en la base de datos' });
       return;
     }
     console.log('Orden de compra creada con éxito', result);
-    res.status(201).json({ message: 'Orden de compra creada con éxito' });
+    res.status(200).json({ message: 'Orden de compra creada con éxito' });
   });
 };
 
+
 // DELETE operation
 exports.deleteOrdenCompra = (req, res) => {
-  const { CodOrden } = req.body;
+  const { RIFSuc, CodOrden, CodRequiCom, CodProd } = req.body;
 
-  const sqlDelete = 'DELETE FROM ORDENES_COMPRAS WHERE CodOrden = ?';
+  const sqlDelete = 'DELETE FROM ORDENES_COMPRAS WHERE RIFSuc = ? AND CodOrden = ? AND CodRequiCom = ? AND CodProd = ?';
 
-  sql.query(connectionString, sqlDelete, [CodOrden], (err, result) => {
+  sql.query(connectionString, sqlDelete, [RIFSuc, CodOrden, CodRequiCom, CodProd], (err, result) => {
     if (err) {
       console.error('Error al eliminar la orden de compra', err);
       res.status(500).json({ message: 'Error al eliminar la orden de compra' });
@@ -49,4 +55,5 @@ exports.deleteOrdenCompra = (req, res) => {
     res.status(200).json({ message: 'Orden de compra eliminada con éxito' });
   });
 };
+
 

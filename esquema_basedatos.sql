@@ -759,23 +759,5 @@ BEGIN
     SELECT @Descuento AS Descuento;
 END;
 
-<<<<<<< HEAD
 
 
-=======
-EXECUTE ObtenerDescuentoPorOrdenServicio @NroOrdenServicio = 1
-*/
-
-/*SEGURIDAD MULTINIVEL*/
-/*
-
-CREATE ROLE ENCARGADO 
-
-GRANT SELECT, UPDATE, DELETE, INSERT to ENCARGADO
-
-CREATE ROLE TRABAJADOR
-
-GRANT SELECT TO TRABAJADOR
-
-*/
->>>>>>> a4cd517351f053f75f9df7bb926e6780b05091b4

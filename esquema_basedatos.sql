@@ -768,7 +768,7 @@ BEGIN
     SELECT @Descuento AS Descuento;
 END;
 
-
+--Procedimiento para obtener el monto total a pagar por una orden de servicio dada
 GO
 CREATE PROCEDURE ObtenerTotalAPagarPorOrdenServicio
     @NroOrdenServicio INT

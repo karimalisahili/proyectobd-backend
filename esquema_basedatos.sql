@@ -226,10 +226,17 @@ CREATE TABLE FACTURAS_PROVEEDORES (
     NumFact INT NOT NULL PRIMARY KEY,
     Monto DECIMAL(10, 2) NOT NULL CHECK (Monto > 0),
     Fecha DATE NOT NULL,
+
+);
+
+CREATE TABLE FACTURAS_PROVEEDORES_ORDENES_COMPRAS(
+    NumFact INT NOT NULL,
     RIFSuc VARCHAR(12) NOT NULL,
     CodOrden INT NOT NULL,
     CodRequiCom INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
     CodProd INT NOT NULL, -- Agregado para coincidir con la llave primaria compuesta de ORDENES_COMPRAS
+    PRIMARY KEY (NumFact,RIFSuc,CodOrden, CodRequiCom, CodProd),
+    FOREIGN KEY (NumFact) REFERENCES FACTURAS_PROVEEDORES(NumFact) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (RIFSuc,CodOrden, CodRequiCom, CodProd) REFERENCES ORDENES_COMPRAS(RIFSuc,CodOrden, CodRequiCom, CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
@@ -353,7 +360,7 @@ CREATE TABLE INVENTARIOS (
     RIFSuc VARCHAR(12) NOT NULL,
     CodProducto INT NOT NULL,
     Existencia INT NOT NULL CHECK (Existencia >= 0),
-    PRIMARY KEY (CodProducto),
+    PRIMARY KEY (RIFSuc, CodProducto),
     FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (CodProducto) REFERENCES PRODUCTOS(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
@@ -761,8 +768,27 @@ BEGIN
     SELECT @Descuento AS Descuento;
 END;
 
+--Procedimiento para obtener el monto total a pagar por una orden de servicio dada
+GO
+CREATE PROCEDURE ObtenerTotalAPagarPorOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    DECLARE @TotalPagar DECIMAL(10,2);
 
-EXECUTE ObtenerDescuentoPorOrdenServicio @NroOrdenServicio = 1
+    -- Inicializar la variable de salida
+    SET @TotalPagar = 0;
+
+    -- Sumar todos los precios de la orden de servicio dada
+    SELECT @TotalPagar = SUM(Precio)
+    FROM CONTRATAN_ACT_ORDENS_PROD_SERV
+    WHERE NroOrenServ = @NroOrdenServicio;
+
+    -- Devolver el total a pagar
+    SELECT @TotalPagar AS TotalPagar;
+END;
+GO
+
 
 /*SEGURIDAD MULTINIVEL*/
 /*

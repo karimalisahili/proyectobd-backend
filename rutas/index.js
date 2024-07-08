@@ -111,6 +111,7 @@ router.get('/datosServicios/:nroOrden', facturas_servicios.getDatosServicios);
 router.get('/datosActividades/:nroOrden', facturas_servicios.getDatosActividades);
 router.get('/datosProductos/:nroOrden', facturas_servicios.getDatosProductos);
 router.get('/datosDescuento/:nroOrden', facturas_servicios.getDatosDescuento);
+router.get('/datoMontoTotal/:nroOrden', facturas_servicios.getDatoMontoTotal);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);
@@ -161,7 +162,7 @@ router.post('/reservas', reservas.createReserva);
 router.delete('/reservas', reservas.deleteReserva);
 router.put('/reservas', reservas.updateReserva );
 //*********************ORDENES_COMPRAS CRD************************
-router.get('/ordenescompras', ordenes_compras.getOrdenesCompras);
+router.get('/ordenescompras/:RIFSuc', ordenes_compras.getOrdenesCompras);
 router.post('/ordenescompras', ordenes_compras.createOrdenCompra);
 router.delete('/ordenescompras', ordenes_compras.deleteOrdenCompra);
 //*********************FACTURAS_TIENDAS CRD**************************

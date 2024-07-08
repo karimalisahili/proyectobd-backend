@@ -100,6 +100,22 @@ exports.getDatosDescuento = (req, res) => {
   });
 };
 
+exports.getDatoMontoTotal = (req, res) => {
+  const { nroOrden } = req.params; 
+
+  const sqlProcedureCall = 'EXECUTE ObtenerTotalAPagarPorOrdenServicio @NroOrdenServicio = ?';
+
+  sql.query(connectionString, sqlProcedureCall, [nroOrden], (err, result) => {
+    if (err) {
+      console.error('Error al obtener el monto total', err);
+      res.status(500).json({ message: 'Error al obtener el monto total' });
+      return;
+    }
+    console.log('Monto total obtenido con éxito', result);
+    res.status(200).json(result);
+  });
+}
+
 // POST operation
 exports.createFacturaServicio = (req, res) => {
   const { CodOrd, Fecha, Monto, Descuento } = req.body;

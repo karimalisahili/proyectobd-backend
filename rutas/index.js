@@ -111,6 +111,7 @@ router.get('/datosServicios/:nroOrden', facturas_servicios.getDatosServicios);
 router.get('/datosActividades/:nroOrden', facturas_servicios.getDatosActividades);
 router.get('/datosProductos/:nroOrden', facturas_servicios.getDatosProductos);
 router.get('/datosDescuento/:nroOrden', facturas_servicios.getDatosDescuento);
+router.get('/datoMontoTotal/:nroOrden', facturas_servicios.getDatoMontoTotal);
 
 //*********************AUTORIZADOS************************
 router.get('/autorizados', autorizados.getAutorizados);

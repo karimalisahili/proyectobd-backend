@@ -762,6 +762,27 @@ BEGIN
 END;
 
 
+GO
+CREATE PROCEDURE ObtenerTotalAPagarPorOrdenServicio
+    @NroOrdenServicio INT
+AS
+BEGIN
+    DECLARE @TotalPagar DECIMAL(10,2);
+
+    -- Inicializar la variable de salida
+    SET @TotalPagar = 0;
+
+    -- Sumar todos los precios de la orden de servicio dada
+    SELECT @TotalPagar = SUM(Precio)
+    FROM CONTRATAN_ACT_ORDENS_PROD_SERV
+    WHERE NroOrenServ = @NroOrdenServicio;
+
+    -- Devolver el total a pagar
+    SELECT @TotalPagar AS TotalPagar;
+END;
+GO
+
+
 /*SEGURIDAD MULTINIVEL*/
 /*
 

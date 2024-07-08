@@ -41,11 +41,11 @@ exports.createOrdenCompra = (req, res) => {
 
 // DELETE operation
 exports.deleteOrdenCompra = (req, res) => {
-  const { RIFSuc, CodOrden, CodRequiCom, CodProd } = req.body;
+  const { RIFSuc, CodOrden, CodRequiCom, CodProd, Precio, RIFProv } = req.body;
 
   const sqlDelete = 'DELETE FROM ORDENES_COMPRAS WHERE RIFSuc = ? AND CodOrden = ? AND CodRequiCom = ? AND CodProd = ?';
 
-  sql.query(connectionString, sqlDelete, [RIFSuc, CodOrden, CodRequiCom, CodProd], (err, result) => {
+  sql.query(connectionString, sqlDelete, [RIFSuc, CodOrden, CodRequiCom, CodProd ], (err, result) => {
     if (err) {
       console.error('Error al eliminar la orden de compra', err);
       res.status(500).json({ message: 'Error al eliminar la orden de compra' });

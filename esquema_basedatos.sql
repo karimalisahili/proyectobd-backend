@@ -240,6 +240,7 @@ CREATE TABLE FACTURAS_PROVEEDORES_ORDENES_COMPRAS(
     FOREIGN KEY (RIFSuc,CodOrden, CodRequiCom, CodProd) REFERENCES ORDENES_COMPRAS(RIFSuc,CodOrden, CodRequiCom, CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
+
 -- Tabla FACTURAS_TIENDAS
 CREATE TABLE FACTURAS_TIENDAS (
     CodF INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
@@ -291,14 +292,26 @@ CREATE TABLE DISTRIBUYEN (
     FOREIGN KEY (CodLinea) REFERENCES LINEAS(CodLineas) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
+
+-- Tabla INVENTARIOS
+CREATE TABLE INVENTARIOS (
+    RIFSuc VARCHAR(12) NOT NULL,
+    CodProducto INT NOT NULL,
+    Existencia INT NOT NULL CHECK (Existencia >= 0),
+    PRIMARY KEY (RIFSuc, CodProducto),
+    FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (CodProducto) REFERENCES PRODUCTOS(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
+);
+
 -- Tabla REGISTRAN_FACT_PROD
 CREATE TABLE REGISTRAN_FACT_PROD (
     NumFactTienda INT NOT NULL,
-    CodProdTienda INT NOT NULL,
+    CodProducto INT NOT NULL,
+	RIFSuc VARCHAR(12) NOT NULL,
     CantComprada INT NOT NULL,
-    PRIMARY KEY (NumFactTienda, CodProdTienda),
+    PRIMARY KEY (NumFactTienda, CodProducto,RIFSuc),
     FOREIGN KEY (NumFactTienda) REFERENCES FACTURAS_TIENDAS(CodF) ON UPDATE CASCADE ON DELETE NO ACTION,
-    FOREIGN KEY (CodProdTienda) REFERENCES PRODUCTOS_TIENDA(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
+    FOREIGN KEY (RIFSuc, CodProducto) REFERENCES INVENTARIOS(RIFSuc, CodProducto) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
 -- Tabla RECIBEN_SUC_TIPOV
@@ -353,17 +366,6 @@ CREATE TABLE CONTRATAN_ACT_ORDENS_PROD_SERV (
     FOREIGN KEY (CodProductoServ) REFERENCES PRODUCTOS_SERVICIOS(CodProd) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-
-
--- Tabla INVENTARIOS
-CREATE TABLE INVENTARIOS (
-    RIFSuc VARCHAR(12) NOT NULL,
-    CodProducto INT NOT NULL,
-    Existencia INT NOT NULL CHECK (Existencia >= 0),
-    PRIMARY KEY (RIFSuc, CodProducto),
-    FOREIGN KEY (RIFSuc) REFERENCES SUCURSALES(RIFSuc) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (CodProducto) REFERENCES PRODUCTOS(CodProd) ON UPDATE CASCADE ON DELETE NO ACTION
-);
 
 
 
@@ -491,47 +493,126 @@ WHERE
 -- ********************************* TRIGGERS *******************************
 
 GO
-
-CREATE TRIGGER tr_AfterInsert_Factura_Proveedor
-ON FACTURAS_PROVEEDORES
+-- Crear el trigger para actualizar o insertar en INVENTARIOS después de insertar en FACTURAS_PROVEEDORES_ORDENES_COMPRAS
+CREATE TRIGGER trg_UpdateOrInsertInventory
+ON FACTURAS_PROVEEDORES_ORDENES_COMPRAS
 AFTER INSERT
 AS
 BEGIN
-    -- Declare variables to hold the inserted values
+    SET NOCOUNT ON;
+
+    -- Declarar variables para capturar los valores insertados
     DECLARE @RIFSuc VARCHAR(12);
-    DECLARE @CodProd INT;
-    DECLARE @CodRequiCom INT;
+    DECLARE @CodProducto INT;
     DECLARE @CantProd INT;
 
-    -- Retrieve the inserted values
-    SELECT @RIFSuc = i.RIFSuc, @CodProd = i.CodProd, @CodRequiCom = i.CodRequiCom
-    FROM INSERTED i;
+    -- Obtener los valores insertados desde FACTURAS_PROVEEDORES_ORDENES_COMPRAS
+    SELECT @RIFSuc = i.RIFSuc, @CodProducto = i.CodProd, @CantProd = rc.CantProd
+    FROM inserted i
+    INNER JOIN REQUISICIONES_COMPRA rc ON i.RIFSuc = rc.RIFSuc AND i.CodRequiCom = rc.IdReq AND i.CodProd = rc.CodProd;
 
-    -- Retrieve the quantity from the requisitions table
-    SELECT @CantProd = rc.CantProd
-    FROM REQUISICIONES_COMPRA rc
-    WHERE rc.IdReq = @CodRequiCom AND rc.CodProd = @CodProd AND rc.RIFSuc = @RIFSuc;
-
-    -- Check if the product already exists in the inventory
-    IF EXISTS (SELECT 1 FROM INVENTARIOS WHERE RIFSuc = @RIFSuc AND CodProducto = @CodProd)
+    -- Verificar si ya existe el producto en INVENTARIOS para esa sucursal
+    IF EXISTS (
+        SELECT 1
+        FROM INVENTARIOS
+        WHERE RIFSuc = @RIFSuc
+          AND CodProducto = @CodProducto
+    )
     BEGIN
-        -- Update the existing inventory record
+        -- Si existe, actualizar la existencia sumando la cantidad insertada
         UPDATE INVENTARIOS
         SET Existencia = Existencia + @CantProd
-        WHERE RIFSuc = @RIFSuc AND CodProducto = @CodProd;
+        WHERE RIFSuc = @RIFSuc
+          AND CodProducto = @CodProducto;
     END
     ELSE
     BEGIN
-        -- Insert a new inventory record
+        -- Si no existe, insertar un nuevo registro en INVENTARIOS
         INSERT INTO INVENTARIOS (RIFSuc, CodProducto, Existencia)
-        VALUES (@RIFSuc, @CodProd, @CantProd);
+        VALUES (@RIFSuc, @CodProducto, @CantProd);
+    END;
+END;
+GO
+
+GO
+-- Crear  el trigger para actualizar el inventario cuando se inserte en CONTRATAN_ACT_ORDENS_PROD_SERV
+CREATE TRIGGER trg_UpdateInventoryOnServiceOrder
+ON CONTRATAN_ACT_ORDENS_PROD_SERV
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Declarar variables para capturar los valores insertados
+    DECLARE @RIFSuc VARCHAR(12);
+    DECLARE @CodProducto INT;
+    DECLARE @CantProd INT;
+
+    -- Obtener los valores insertados desde CONTRATAN_ACT_ORDENS_PROD_SERV
+    SELECT @RIFSuc = A.rifSucursal,
+           @CodProducto = i.CodProductoServ,
+           @CantProd = i.CantProd
+    FROM inserted i
+    INNER JOIN ACTIVIDADES A ON i.CodServicio = A.CodServicio AND i.NroActividad = A.NroActividad;
+
+    -- Verificar si ya existe el producto en INVENTARIOS para esa sucursal
+    IF EXISTS (
+        SELECT 1
+        FROM INVENTARIOS
+        WHERE RIFSuc = @RIFSuc
+          AND CodProducto = @CodProducto
+    )
+    BEGIN
+        -- Si existe, actualizar la existencia restando la cantidad utilizada en la orden de servicio
+        UPDATE INVENTARIOS
+        SET Existencia = Existencia - @CantProd
+        WHERE RIFSuc = @RIFSuc
+          AND CodProducto = @CodProducto;
+    END
+    ELSE
+    BEGIN
+        -- Insertar nuevo registro en INVENTARIOS si no existe
+        INSERT INTO INVENTARIOS (RIFSuc, CodProducto, Existencia)
+        VALUES (@RIFSuc, @CodProducto, -@CantProd); -- Se asume que la existencia puede ser negativa
+    END;
+END;
+GO
+
+GO
+
+CREATE TRIGGER tr_AfterInsert_RegistranFactProd
+ON REGISTRAN_FACT_PROD
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Declare variables to hold the inserted values
+    DECLARE @RIFSuc VARCHAR(12);
+    DECLARE @CodProducto INT;
+    DECLARE @CantComprada INT;
+
+    -- Retrieve the inserted values
+    SELECT @RIFSuc = i.RIFSuc, @CodProducto = i.CodProducto, @CantComprada = i.CantComprada
+    FROM INSERTED i;
+
+    -- Check if the product exists in the inventory
+    IF EXISTS (SELECT 1 FROM INVENTARIOS WHERE RIFSuc = @RIFSuc AND CodProducto = @CodProducto)
+    BEGIN
+        -- Update the existing inventory record
+        UPDATE INVENTARIOS
+        SET Existencia = Existencia - @CantComprada
+        WHERE RIFSuc = @RIFSuc AND CodProducto = @CodProducto;
+    END
+    ELSE
+    BEGIN
+        -- Raise an error if the product does not exist in the inventory
+        RAISERROR('El producto no existe en el inventario.', 16, 1);
+        ROLLBACK TRANSACTION;
     END
 END;
 
 GO
-
-
-
 
 
 

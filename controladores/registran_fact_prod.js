@@ -16,13 +16,13 @@ exports.getRegistranFactProd = (req, res) => {
 
 // POST operation
 exports.createRegistranFactProd = (req, res) => {
-  const { NumFactTienda, CodProdTienda, CantComprada } = req.body;
+  const { NumFactTienda, CodProducto, RIFSuc, CantComprada } = req.body;
 
   const sqlInsert = `INSERT INTO REGISTRAN_FACT_PROD 
-                     (NumFactTienda, CodProdTienda, CantComprada) 
-                     VALUES (?, ?, ?)`;
+                     (NumFactTienda, CodProducto, RIFSuc, CantComprada) 
+                     VALUES (?, ?, ?, ?)`;
 
-  sql.query(connectionString, sqlInsert, [NumFactTienda, CodProdTienda, CantComprada], (err, result) => {
+  sql.query(connectionString, sqlInsert, [NumFactTienda, CodProducto, RIFSuc, CantComprada], (err, result) => {
     if (err) {
       console.error('Error al insertar en la base de datos', err);
       res.status(500).json({ message: 'Error al insertar en la base de datos' });

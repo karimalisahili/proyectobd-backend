@@ -29,7 +29,7 @@ exports.createPago = (req, res) => {
       return;
     }
     console.log('Pago creado con éxito', result);
-    res.status(201).json({ message: 'Pago creado con éxito' });
+    res.status(200).json({ message: 'Pago creado con éxito' });
   });
 };
 

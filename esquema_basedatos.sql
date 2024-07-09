@@ -383,10 +383,10 @@ GO
 
 
 
-/*
---Vista aux para la primera consulta de estadísticas
 
-CREATE VIEW V_ServiciosPorMarca AS
+
+CREATE VIEW V_ServiciosPorMarca 
+AS
 SELECT 
     S.Descripcion AS TipoServicio,
     M.Nombre AS Marca,
@@ -410,7 +410,8 @@ GROUP BY
 
 -- Desde donde voy a buscar la primera consulta de Estadísticas
 
-	CREATE VIEW V_Est_Marcas_Servicios AS
+CREATE VIEW V_Est_Marcas_Servicios 
+AS
 SELECT 
     spm1.TipoServicio,
     spm1.Marca,
@@ -427,7 +428,8 @@ WHERE
 
 -- Vista Auxiliat para la consulta de estadísticas 2
 
-CREATE VIEW V_ServiciosPorEmpleadoMes AS
+CREATE VIEW V_ServiciosPorEmpleadoMes 
+AS
 SELECT 
     T.Cedula AS CIEmpleado,
     T.Nombre AS NombreEmpleado,
@@ -447,7 +449,8 @@ GROUP BY
 
 ---Consulta 2 Personal que realiza más servicios por mes.
 
-	CREATE VIEW V_PersonalMasServiciosPorMes AS
+CREATE VIEW V_PersonalMasServiciosPorMes 
+AS
 SELECT 
     Año as Anio,
     Mes,
@@ -465,7 +468,8 @@ WHERE
 
 ---Consulta 2 Personal que realiza menos servicios por mes.
 
-	CREATE VIEW V_PersonalMenosServiciosPorMes AS
+CREATE VIEW V_PersonalMenosServiciosPorMes 
+AS
 SELECT 
     Año as Anio,
     Mes,
@@ -482,7 +486,6 @@ WHERE
     );
 
 
-*/
 
 
 -- ********************************* TRIGGERS *******************************
@@ -674,10 +677,10 @@ CREATE PROCEDURE ObtenerDatosOrdenServicio
 AS
 BEGIN
     SELECT 
-        os.Nro AS 'Nro ORDEN DE SERVICIO',
-        v.CodVehiculo AS 'CODIGO DE VEHICULO',
-        r.NombreResponsable AS 'Nombre Responsable',
-        r.CIResponsable AS 'CI. Responsable'
+        os.Nro AS 'NroORDENDESERVICIO',
+        v.CodVehiculo AS 'CODIGODEVEHICULO',
+        r.NombreResponsable AS 'NombreResponsable',
+        r.CIResponsable AS 'CIResponsable'
     FROM ORDENES_SERVICIOS os
     INNER JOIN VEHICULOS v ON os.CodVehiculo = v.CodVehiculo
     INNER JOIN RESPONSABLES r ON v.CiResp = r.CIResponsable
@@ -710,7 +713,7 @@ AS
 BEGIN
     SELECT 
         a.CodServicio AS 'COD',
-        a.NroActividad AS 'COD ACTIVIDAD',
+        a.NroActividad AS 'CODACTIVIDAD',
         a.Descripcion AS 'DESCRIPCION',
         a.Monto AS 'MONTO'
     FROM CONTRATAN_ACT_ORDENS_PROD_SERV caos

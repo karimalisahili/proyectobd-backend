@@ -2,12 +2,9 @@ const { sql, connectionString } = require('../config'); // Asegúrate de que la 
 
 // GET operation
 exports.getFacturasServicios = (req, res) => {
-  const CodOrden = req.params.CodOrden;
-  console.log(CodOrden);
+  const sqlSelect = 'SELECT * FROM FACTURAS_SERVICIOS';
 
-  const sqlSelect = 'SELECT * FROM FACTURAS_SERVICIOS WHERE CodOrd = ?';
-
-  sql.query(connectionString, sqlSelect, [CodOrden], (err, result) => {
+  sql.query(connectionString, sqlSelect, (err, result) => {
     if (err) {
       console.error('Error al obtener los registros de FACTURAS_SERVICIOS', err);
       res.status(500).json({ message: 'Error al obtener los registros de FACTURAS_SERVICIOS' });
@@ -121,7 +118,7 @@ exports.createFacturaServicio = (req, res) => {
   const { CodOrd, Fecha, Monto, Descuento } = req.body;
 
   const sqlInsert = `INSERT INTO FACTURAS_SERVICIOS 
-                     (CodOrd Fecha, Monto, Descuento) 
+                     (CodOrd, Fecha, Monto, Descuento) 
                      VALUES (?,?, ?, ?)`;
 
   sql.query(connectionString, sqlInsert, [CodOrd, Fecha, Monto, Descuento], (err, result) => {
@@ -131,7 +128,7 @@ exports.createFacturaServicio = (req, res) => {
       return;
     }
     console.log('Registro de FACTURAS_SERVICIOS creado con éxito', result);
-    res.status(201).json({ message: 'Registro de FACTURAS_SERVICIOS creado con éxito' });
+    res.status(200).json({ message: 'Registro de FACTURAS_SERVICIOS creado con éxito' });
   });
 };
 

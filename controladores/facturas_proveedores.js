@@ -8,7 +8,7 @@ exports.getFacturaProveedor = (req, res) => {
     // Modificar la consulta SQL para hacer un JOIN entre FACTURAS_PROVEEDORES y FACTURAS_PROVEEDORES_ORDENES_COMPRAS
     // y filtrar por RIFSuc
     const sqlSelect = `
-        SELECT fp.* 
+        SELECT DISTINCT fp.* 
         FROM FACTURAS_PROVEEDORES fp
         JOIN FACTURAS_PROVEEDORES_ORDENES_COMPRAS fpo
         ON fp.NumFact = fpo.NumFact

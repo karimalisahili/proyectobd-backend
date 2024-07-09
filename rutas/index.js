@@ -37,6 +37,11 @@ const contratan_act_ordens_prod_serv = require('../controladores/contratan_act_o
 const facturas_servicios = require('../controladores/facturas_servicios');
 const inventario_view = require('../controladores/inventario_view');
 const estadisticas = require('../controladores/estadisticas');
+const detallefactura = require('../controladores/detallefactura');
+
+//*********************DETALLEFACTURA************************
+router.get('/detallefactura/:NumFact', detallefactura.getDetalleFactura);
+
 
 //*********************login************************
 router.post('/login',login.login);

@@ -60,7 +60,7 @@ router.delete('/responsables', responsables.deleteResponsables);
 router.put('/responsables', responsables.updateResponsables);
 
 //*********************FACTURAS_PROVEEDORES CRD****************
-router.get('/facturasproveedores',facturas_proveedores.getFacturaProveedor);   
+router.get('/facturasproveedores/:RIFSuc',facturas_proveedores.getFacturaProveedor);   
 router.post('/facturasproveedores', facturas_proveedores.createFacturaProveedor);   
 router.delete('/facturasproveedores', facturas_proveedores.deleteFacturaProveedor);  
 
